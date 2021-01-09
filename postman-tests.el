@@ -200,7 +200,22 @@
                   "Authorization: Basic {{(base64-encode-string "
                   "(encode-coding-string \"user1:Password!\" 'utf-8) t)}}\n"
                   "header: value\n"
-                  "\n{\"login\": \"admin\"}\n"))))
+                  "\n{\"login\": \"admin\"}\n")))
+  (let ((postman-auth-basic-as-elisp-code))
+    (should (equal (postman-output-verb-request
+                    "Description\nend."
+                    "GET"
+                    "users"
+                    '(("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh")
+                      ("header" . "value"))
+                    "{\"login\": \"admin\"}")
+                   (concat
+                    "# Description\n"
+                    "# end.\n"
+                    "get users\n"
+                    "Authorization: Basic dXNlcjE6UGFzc3dvcmQh\n"
+                    "header: value\n"
+                    "\n{\"login\": \"admin\"}\n")))))
 
 (ert-deftest postman-output-verb-footer ()
   "Test the output of verb footer."
@@ -321,7 +336,22 @@
                   "(encode-coding-string \"user1:Password!\" 'utf-8) t)\n"
                   "Authorization: :auth\n"
                   "header: value\n"
-                  "{\"login\": \"admin\"}\n"))))
+                  "{\"login\": \"admin\"}\n")))
+    (let ((postman-auth-basic-as-elisp-code))
+      (should (equal (postman-output-restclient-request
+                      "Description\nend."
+                      "GET"
+                      "users"
+                      '(("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh")
+                        ("header" . "value"))
+                      "{\"login\": \"admin\"}")
+                     (concat
+                      "# Description\n"
+                      "# end.\n"
+                      "GET users\n"
+                      "Authorization: Basic dXNlcjE6UGFzc3dvcmQh\n"
+                      "header: value\n"
+                      "{\"login\": \"admin\"}\n")))))
 
 (ert-deftest postman-output-restclient-footer ()
   "Test the output of restclient footer."
