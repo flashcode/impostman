@@ -32,18 +32,18 @@ Two functions can be called interactively to convert a Postman collection:
 The function `postman-convert-file` takes two optional parameters (they are asked if not provided):
 
 - `filename` (optional): the Postman collection
-- `output` (optional): the output type (`"verb"` or `"restclient"`)
+- `output` (optional): the output type (`verb` or `restclient`)
 
 Example:
 
 ```elisp
-(postman-convert-file "~/path/to/collection.json" "verb")
+(postman-convert-file "/path/to/collection.json" "verb")
 ```
 
 The function `postman-convert-string` takes two parameters (the second is optional and asked if not provided):
 
 - `string`: the string with the collection (JSON format)
-- `output` (optional): the output type (`"verb"` or `"restclient"`)
+- `output` (optional): the output type (`verb` or `restclient`)
 
 Example:
 
