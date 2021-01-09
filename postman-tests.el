@@ -80,6 +80,18 @@
                   "https://example.com?a=1" '("apikey" "1a2b3c4d"))
                  "https://example.com?a=1&apikey=1a2b3c4d")))
 
+(ert-deftest postman-get-auth-basic-plain ()
+  "Test the base64 decoding of Authorization Basic header."
+  (should (equal (postman-get-auth-basic-plain "")
+                 nil))
+  (should (equal (postman-get-auth-basic-plain "test")
+                 nil))
+  (should (equal (postman-get-auth-basic-plain "Basic a")
+                 nil))
+  (should (equal (postman-get-auth-basic-plain
+                  "Basic dXNlcm5hbWU6cGFzc3dvcmQ=")
+                 "username:password")))
+
 (ert-deftest postman-output-verb-header ()
   "Test the output of verb header."
   (should (equal (postman-output-verb-header "test" "Description\nLine 2")
@@ -172,6 +184,21 @@
                   "# end.\n"
                   "get users\n"
                   "Authorization: token\n"
+                  "header: value\n"
+                  "\n{\"login\": \"admin\"}\n")))
+  (should (equal (postman-output-verb-request
+                  "Description\nend."
+                  "GET"
+                  "users"
+                  '(("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh")
+                    ("header" . "value"))
+                  "{\"login\": \"admin\"}")
+                 (concat
+                  "# Description\n"
+                  "# end.\n"
+                  "get users\n"
+                  "Authorization: Basic {{(base64-encode-string "
+                  "(encode-coding-string \"user1:Password!\" 'utf-8) t)}}\n"
                   "header: value\n"
                   "\n{\"login\": \"admin\"}\n"))))
 
@@ -277,6 +304,22 @@
                   "# end.\n"
                   "GET users\n"
                   "Authorization: token\n"
+                  "header: value\n"
+                  "{\"login\": \"admin\"}\n")))
+    (should (equal (postman-output-restclient-request
+                  "Description\nend."
+                  "GET"
+                  "users"
+                  '(("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh")
+                    ("header" . "value"))
+                  "{\"login\": \"admin\"}")
+                 (concat
+                  "# Description\n"
+                  "# end.\n"
+                  "GET users\n"
+                  ":auth := (format \"Basic %s\" (base64-encode-string "
+                  "(encode-coding-string \"user1:Password!\" 'utf-8) t)\n"
+                  "Authorization: :auth\n"
                   "header: value\n"
                   "{\"login\": \"admin\"}\n"))))
 

@@ -108,6 +108,16 @@ QUERY-STRING is nil or a list with two strings."
        (nth 1 query-string))
     url))
 
+(defun postman-get-auth-basic-plain (authorization)
+  "Get the plain-text \"username:password\" with the value of the
+Authorization header, if it is Basic authentication.
+For example with the value \"Basic dXNlcm5hbWU6cGFzc3dvcmQ=\",
+the function returns \"username:password\".
+Return nil if the authentication is not Basic or if the base64 is invalid."
+  (save-match-data
+    (when (string-match "^Basic \\(.*\\)" authorization)
+      (ignore-errors (base64-decode-string (match-string 1 authorization))))))
+
 ;; verb output
 
 (defun postman-output-verb-header (name description)
@@ -143,31 +153,26 @@ METHOD is the HTTP method.
 URL is the URL.
 HEADERS is a alist with HTTP headers.
 BODY is the request body."
-  (let ((str-headers ""))
+  (let ((list-headers))
     (dolist (header headers)
-      (let ((header-name (car header))
-            (header-value (cdr header)))
-        (save-match-data
-          (if (and postman-verb-auth-basic-as-elisp-code
-                   (string= header-name "Authorization")
-                   (string-match "^Basic \\(.*\\)" header-value))
-              (let ((auth-plain
-                     (base64-decode-string (match-string 1 header-value))))
-                (setq str-headers
-                      (concat
-                       str-headers
-                       header-name
-                       ": Basic "
-                       "{{(base64-encode-string "
-                       "(encode-coding-string \""
-                       auth-plain "\" 'utf-8) t)}}\n")))
-            (setq str-headers (concat
-                               str-headers
-                               header-name ": " header-value "\n"))))))
+      (let* ((header-name (car header))
+             (header-value (cdr header))
+             (new-value header-value))
+        (when (and postman-auth-basic-as-elisp-code
+                   (string= header-name "Authorization"))
+          (let ((auth-plain (postman-get-auth-basic-plain header-value)))
+            (when auth-plain
+              (setq new-value
+                    (concat
+                     "Basic "
+                     "{{(base64-encode-string (encode-coding-string \""
+                     auth-plain "\" 'utf-8) t)}}")))))
+        (push (concat header-name ": " new-value) list-headers)))
     (concat
      (postman-format-comment description)
      (downcase method) " " url "\n"
-     str-headers
+     (when list-headers
+       (concat (string-join (nreverse list-headers) "\n") "\n"))
      (if (string-empty-p body) "" (concat "\n" body "\n")))))
 
 (defun postman-output-verb-footer (name)
@@ -222,15 +227,27 @@ METHOD is the HTTP method.
 URL is the URL.
 HEADERS is a alist with HTTP headers.
 BODY is the request body."
-  (let ((str-headers ""))
+  (let ((list-headers))
     (dolist (header headers)
-      (setq str-headers (concat
-                         str-headers
-                         (car header) ": " (cdr header) "\n")))
+      (let* ((header-name (car header))
+             (header-value (cdr header))
+             (new-value header-value))
+        (when (and postman-auth-basic-as-elisp-code
+                   (string= header-name "Authorization"))
+          (let ((auth-plain (postman-get-auth-basic-plain header-value)))
+            (when auth-plain
+              (push (concat
+                     ":auth := (format \"Basic %s\" "
+                     "(base64-encode-string (encode-coding-string \""
+                     auth-plain "\" 'utf-8) t)")
+                    list-headers)
+              (setq new-value ":auth"))))
+        (push (concat header-name ": " new-value) list-headers)))
     (concat
      (postman-format-comment description)
      method " " url "\n"
-     str-headers
+     (when list-headers
+       (concat (string-join (nreverse list-headers) "\n") "\n"))
      (if (string-empty-p body) "" (concat body "\n")))))
 
 (defun postman-output-restclient-footer (name)
