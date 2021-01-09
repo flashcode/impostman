@@ -55,6 +55,9 @@ If nil, the username and password are directly encoded in base64:
 Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ="
   :type 'boolean)
 
+(defconst postman-version "0.1.0"
+  "Postman-to-emacs package version")
+
 (defconst postman-outputs-alist
   '(("verb" . postman-output-verb-alist)
     ("restclient" . postman-output-restclient-alist))
