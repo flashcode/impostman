@@ -1,4 +1,4 @@
-;;; impostman.el --- Import Postman collections in Emacs  -*- lexical-binding: t -*-
+;;; impostman.el --- Import Postman collections  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2020-2021 Sébastien Helleu <flashcode@flashtux.org>
 
@@ -27,8 +27,8 @@
 
 ;;; Commentary:
 
-;; Import Postman collections in Emacs to use them with HTTP clients:
-;; verb, restclient or your custom output.
+;; Import Postman collections to use them with HTTP clients: verb, restclient
+;; or your custom output.
 
 ;;; Code:
 
@@ -37,7 +37,7 @@
 ;; outputs
 
 (defgroup impostman nil
-  "Import Postman collections in Emacs."
+  "Import Postman collections."
   :prefix "impostman-"
   :group 'tools)
 
