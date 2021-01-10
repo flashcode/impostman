@@ -96,7 +96,7 @@ A function can be `ignore`, in this case it is simply ignored, for example if yo
 Then you can call for a file:
 
 ```elisp
-(impostman-parse-file "~/path/to/collection.json" my-impostman-walkman-alist)
+(impostman-parse-file "/path/to/collection.json" my-impostman-walkman-alist)
 ```
 
 And for a string:
