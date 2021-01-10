@@ -5,7 +5,7 @@
 Postman collections can be imported and used with these Emacs HTTP clients:
 
 - [verb](https://github.com/federicotdn/verb)
-- [restclient.el](https://github.com/pashky/restclient.el)
+- [restclient](https://github.com/pashky/restclient.el)
 
 You can use your own functions to write other formats, see [Add new output](#add-new-output).
 
