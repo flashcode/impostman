@@ -668,13 +668,13 @@
 
 (ert-deftest impostman-test-import-file ()
   "Test import of a file with a Postman collection."
-  (setq impostman-test-output-test-alist
-        '((init . ignore)
-          (header . impostman-test-output-test-header)
-          (item . impostman-test-output-test-item)
-          (request . impostman-test-output-test-request)
-          (footer . impostman-test-output-test-footer)
-          (end . ignore)))
+  (defvar impostman-test-output-test-alist
+    '((init . ignore)
+      (header . impostman-test-output-test-header)
+      (item . impostman-test-output-test-item)
+      (request . impostman-test-output-test-request)
+      (footer . impostman-test-output-test-footer)
+      (end . ignore)))
   (let* ((verb-output
           (impostman-test--get-file-contents "tests/verb.org"))
          (restclient-output
@@ -707,13 +707,13 @@
 
 (ert-deftest impostman-test-import-string ()
   "Test import of a string with a Postman collection."
-  (setq impostman-test-output-test-alist
-        '((init . ignore)
-          (header . impostman-test-output-test-header)
-          (item . impostman-test-output-test-item)
-          (request . impostman-test-output-test-request)
-          (footer . impostman-test-output-test-footer)
-          (end . ignore)))
+  (defvar impostman-test-output-test-alist
+    '((init . ignore)
+      (header . impostman-test-output-test-header)
+      (item . impostman-test-output-test-item)
+      (request . impostman-test-output-test-request)
+      (footer . impostman-test-output-test-footer)
+      (end . ignore)))
   (let* ((collection
           (impostman-test--get-file-contents "tests/collection.json"))
          (verb-output
