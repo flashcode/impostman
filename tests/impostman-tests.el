@@ -35,6 +35,12 @@
 (require 'ert)
 (require 'impostman)
 
+(defun get-file-contents (filename)
+  "Get contents of filename."
+  (with-temp-buffer
+    (insert-file-contents filename)
+    (buffer-string)))
+
 (ert-deftest impostman-format-comment ()
   "Test the format of comment."
   ;; without prefix: default is "# "
@@ -627,16 +633,51 @@
                         "# End:\n"))))
       (kill-this-buffer))))
 
+(defun impostman-output-test-header (name description)
+  "Format the test header."
+  (concat
+   "* " name "  :test:\n"
+   (impostman-format-comment description)))
+
+(defun impostman-output-test-item (level name description)
+  "Format a test item."
+  (concat
+   (if (<= level 2) "\n" "")
+   (make-string (max level 1) ?*) " " name "\n"
+   (impostman-format-comment description)))
+
+(defun impostman-output-test-request (description method url headers body)
+  "Format a test request."
+  (let ((list-headers))
+    (dolist (header headers)
+      (push (format "%s: %s" (car header) (cdr header)) list-headers))
+    (concat
+     (impostman-format-comment description)
+     method " " url "\n"
+     (when list-headers
+       (concat (string-join (nreverse list-headers) "\n") "\n"))
+     (if (string-empty-p body) "" (concat "\n" body "\n")))))
+
+(defun impostman-output-test-footer (name)
+  "Format the test footer."
+  (concat "\n" "* End of " name "\n"))
+
 (ert-deftest impostman-import-file ()
   "Test import of a file with a Postman collection."
-  (let ((verb-output)
-        (restclient-output))
-    (with-temp-buffer
-      (insert-file-contents "tests/verb.org")
-      (setq verb-output (buffer-string)))
-    (with-temp-buffer
-      (insert-file-contents "tests/restclient.org")
-      (setq restclient-output (buffer-string)))
+  (setq impostman-output-test-alist
+        '((init . ignore)
+          (header . impostman-output-test-header)
+          (item . impostman-output-test-item)
+          (request . impostman-output-test-request)
+          (footer . impostman-output-test-footer)
+          (end . ignore)))
+  (let* ((verb-output (get-file-contents "tests/verb.org"))
+         (restclient-output (get-file-contents "tests/restclient.org"))
+         (test-output (get-file-contents "tests/test.org"))
+         (impostman-outputs-alist
+          '(("verb" . impostman-output-verb-alist)
+            ("restclient" . impostman-output-restclient-alist)
+            ("test" . impostman-output-test-alist))))
     (save-excursion
       (impostman-import-file "tests/collection.json" "verb")
       (should (string-prefix-p "test.org" (buffer-name)))
@@ -648,22 +689,32 @@
       (should (string-prefix-p "test.org" (buffer-name)))
       (let ((result (buffer-string)))
         (should (equal result restclient-output)))
-      (kill-this-buffer))))
+      (kill-this-buffer))
+    (save-excursion
+      (impostman-import-file "tests/collection.json" "test")
+      (should (string-prefix-p "test.org" (buffer-name)))
+      (let ((result (buffer-string)))
+        (should (equal result test-output)))
+      (kill-this-buffer)))
+  (makunbound 'impostman-output-test-alist))
 
 (ert-deftest impostman-import-string ()
   "Test import of a string with a Postman collection."
-  (let ((collection)
-        (verb-output)
-        (restclient-output))
-    (with-temp-buffer
-      (insert-file-contents "tests/collection.json")
-      (setq collection (buffer-string)))
-    (with-temp-buffer
-      (insert-file-contents "tests/verb.org")
-      (setq verb-output (buffer-string)))
-    (with-temp-buffer
-      (insert-file-contents "tests/restclient.org")
-      (setq restclient-output (buffer-string)))
+  (setq impostman-output-test-alist
+        '((init . ignore)
+          (header . impostman-output-test-header)
+          (item . impostman-output-test-item)
+          (request . impostman-output-test-request)
+          (footer . impostman-output-test-footer)
+          (end . ignore)))
+  (let* ((collection (get-file-contents "tests/collection.json"))
+         (verb-output (get-file-contents "tests/verb.org"))
+         (restclient-output (get-file-contents "tests/restclient.org"))
+         (test-output (get-file-contents "tests/test.org"))
+         (impostman-outputs-alist
+          '(("verb" . impostman-output-verb-alist)
+            ("restclient" . impostman-output-restclient-alist)
+            ("test" . impostman-output-test-alist))))
     (save-excursion
       (impostman-import-string collection "verb")
       (should (string-prefix-p "test.org" (buffer-name)))
@@ -675,6 +726,15 @@
       (should (string-prefix-p "test.org" (buffer-name)))
       (let ((result (buffer-string)))
         (should (equal result restclient-output)))
-      (kill-this-buffer))))
+      (kill-this-buffer))
+    (save-excursion
+      (impostman-import-string collection "test")
+      (should (string-prefix-p "test.org" (buffer-name)))
+      (let ((result (buffer-string)))
+        (should (equal result test-output)))
+      (kill-this-buffer)))
+  (makunbound 'impostman-output-test-alist))
+
+(provide 'impostman-tests)
 
 ;;; impostman-tests.el ends here

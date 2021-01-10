@@ -60,11 +60,6 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ="
 (defconst impostman-version "0.1.0"
   "Impostman package version")
 
-(defconst impostman-outputs-alist
-  '(("verb" . impostman-output-verb-alist)
-    ("restclient" . impostman-output-restclient-alist))
-  "The different supported outputs")
-
 (defconst impostman-output-verb-alist
   '((init . ignore)
     (header . impostman-output-verb-header)
@@ -82,6 +77,11 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ="
     (footer . impostman-output-restclient-footer)
     (end . impostman-output-restclient-end))
   "Emacs restclient output")
+
+(defconst impostman-outputs-alist
+  '(("verb" . impostman-output-verb-alist)
+    ("restclient" . impostman-output-restclient-alist))
+  "The different supported outputs")
 
 ;; utility functions
 
