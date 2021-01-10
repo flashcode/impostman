@@ -7,7 +7,7 @@
 ;; Created: 2020-12-24
 ;; Keywords: tools
 ;; URL: https://github.com/flashcode/impostman
-;; Package-Version: 0.1.0
+;; Package-Version: 0.1.0-dev
 ;; Package-Requires: ((emacs "27.1"))
 
 ;; This file is not part of GNU Emacs.
@@ -57,7 +57,7 @@ If nil, the username and password are directly encoded in base64:
 Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ="
   :type 'boolean)
 
-(defconst impostman-version "0.1.0"
+(defconst impostman-version "0.1.0-dev"
   "Impostman package version")
 
 (defconst impostman-output-verb-alist
