@@ -97,19 +97,19 @@ PREFIX is the prefix to add in front of each line (default is \"# \")."
        (replace-regexp-in-string "\n" (concat "\n" prefix) comment)
        "\n"))))
 
-(defun postman-add-query-string-to-url (url query-string)
+(defun postman-add-query-string-items-to-url (url query-string-items)
   "Return the URL with updated query string parameters.
 
 URL is a string.
-QUERY-STRING is nil or a list with two strings."
-  (if query-string
-      (concat
-       url
-       (if (string-match-p "\\?" url) "&" "?")
-       (nth 0 query-string)
-       "="
-       (nth 1 query-string))
-    url))
+QUERY-STRING is nil or an alist with query strings to add."
+  (dolist (query-string query-string-items)
+    (setq url (concat
+               url
+               (if (string-match-p "\\?" url) "&" "?")
+               (car query-string)
+               "="
+               (cdr query-string))))
+  url)
 
 (defun postman-get-auth-basic-plain (authorization)
   "Get the plain-text \"username:password\" with the value of the
@@ -149,7 +149,7 @@ DESCRIPTION is the item description."
 DESCRIPTION is the request description.
 METHOD is the HTTP method.
 URL is the URL.
-HEADERS is a alist with HTTP headers.
+HEADERS is an alist with HTTP headers.
 BODY is the request body."
   (let ((list-headers))
     (dolist (header headers)
@@ -223,7 +223,7 @@ DESCRIPTION is the item description."
 DESCRIPTION is the request description.
 METHOD is the HTTP method.
 URL is the URL.
-HEADERS is a alist with HTTP headers.
+HEADERS is an alist with HTTP headers.
 BODY is the request body."
   (let ((list-variables)
         (list-headers))
@@ -267,13 +267,9 @@ NAME is the collection name."
 ;; internal parser
 
 (defun postman--build-auth-headers (auth)
-  "Build headers with the `auth' JSON item.
+  "Return an alist with headers, based on the `auth' JSON item.
 
-AUTH is a hash table.
-
-Return an alist with the auth headers built, for example:
-
-'((\"Authorization\" . \"Basic dXNlcjpwYXNz\"))"
+AUTH is a hash table."
   (let* ((headers)
          (auth (or auth (make-hash-table :test 'equal)))
          (auth-type (gethash "type" auth "")))
@@ -316,14 +312,9 @@ Return an alist with the auth headers built, for example:
     (nreverse headers)))
 
 (defun postman--build-headers (header)
-  "Build headers with the `header' JSON item.
+  "Return an alist with headers, based on the `header' JSON item.
 
-HEADER is a vector with hash tables.
-
-Return an alist with the headers built, for example:
-
-'((\"X-Token\" . \"Token value\")
-  (\"X-Custom-Header\" . \"Second value\"))"
+HEADER is a vector with hash tables."
   (let ((headers))
     (seq-doseq (header-item header)
       (let ((key (gethash "key" header-item ""))
@@ -332,11 +323,11 @@ Return an alist with the headers built, for example:
     (nreverse headers)))
 
 (defun postman--build-auth-query-string (auth)
-  "Return query string parameter to add for authentication as a list
-(\"key\" \"value\"), or nil if there's no query string to add.
+  "Return query string parameter to add for authentication as an alist, for
+example: (\"key\" . \"value\"), or nil if there's no query string to add.
 
 AUTH is a hash table."
-  (let ((query-string))
+  (let ((query-string-items))
     (when auth
       (let ((auth-type (gethash "type" auth "")))
         (when (string= auth-type "apikey")
@@ -355,15 +346,15 @@ AUTH is a hash table."
                        (setq apikey-in value)))))
             (when (and (string= apikey-in "query")
                        (or apikey-key apikey-value))
-              (setq query-string (list apikey-key apikey-value)))))))
-    query-string))
+              (push (cons apikey-key apikey-value) query-string-items))))))
+    (nreverse query-string-items)))
 
 (defun postman--parse-item (items level output-alist)
   "Parse a Postman collection item.
 
 ITEMS is the \"item\" read from collection (vector).
 LEVEL is the level.
-OUTPUT-ALIST is a alist with the output callbacks."
+OUTPUT-ALIST is an alist with the output callbacks."
   (seq-doseq (item items)
     (let* ((name (gethash "name" item ""))
            (description (gethash "description" item ""))
@@ -387,7 +378,7 @@ OUTPUT-ALIST is a alist with the output callbacks."
                  (auth-headers (postman--build-auth-headers auth))
                  (other-headers (postman--build-headers header))
                  (headers (append auth-headers other-headers)))
-            (setq url (postman-add-query-string-to-url
+            (setq url (postman-add-query-string-items-to-url
                        url
                        (postman--build-auth-query-string auth)))
             (insert (funcall
@@ -398,7 +389,7 @@ OUTPUT-ALIST is a alist with the output callbacks."
   "Parse a Postman collection.
 
 COLLECTION is a hash table (parsed JSON).
-OUTPUT-ALIST is a alist with the output callbacks.
+OUTPUT-ALIST is an alist with the output callbacks.
 BUFFER-NAME is the name of the output buffer."
   (let ((name (gethash "name"
                        (gethash "info" collection (make-hash-table))
@@ -421,7 +412,7 @@ BUFFER-NAME is the name of the output buffer."
   "Parse a file with a Postman collection.
 
 FILENAME is a filename with a Postman collection.
-OUTPUT-ALIST is a alist with the output callbacks."
+OUTPUT-ALIST is an alist with the output callbacks."
   (with-temp-buffer
     (insert-file-contents filename)
     (let ((collection (json-parse-buffer)))
@@ -435,7 +426,7 @@ OUTPUT-ALIST is a alist with the output callbacks."
   "Parse a string with a Postman collection.
 
 STRING is a Postman collection (JSON format).
-OUTPUT-ALIST is a alist with the output callbacks."
+OUTPUT-ALIST is an alist with the output callbacks."
   (let ((collection (json-parse-string string)))
     (postman--parse-json collection output-alist)))
 

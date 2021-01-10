@@ -68,16 +68,16 @@
                   ";; Line 2\n"
                   ";; Line 3\n"))))
 
-(ert-deftest postman-add-query-string-to-url ()
-  "Test add of query-string to an URL."
-  (should (equal (postman-add-query-string-to-url
+(ert-deftest postman-add-query-string-items-to-url ()
+  "Test add of query-string items to an URL."
+  (should (equal (postman-add-query-string-items-to-url
                   "https://example.com" nil)
                  "https://example.com"))
-  (should (equal (postman-add-query-string-to-url
-                  "https://example.com" '("apikey" "1a2b3c4d"))
+  (should (equal (postman-add-query-string-items-to-url
+                  "https://example.com" '(("apikey" . "1a2b3c4d")))
                  "https://example.com?apikey=1a2b3c4d"))
-  (should (equal (postman-add-query-string-to-url
-                  "https://example.com?a=1" '("apikey" "1a2b3c4d"))
+  (should (equal (postman-add-query-string-items-to-url
+                  "https://example.com?a=1" '(("apikey" . "1a2b3c4d")))
                  "https://example.com?a=1&apikey=1a2b3c4d")))
 
 (ert-deftest postman-get-auth-basic-plain ()
@@ -454,7 +454,7 @@
     ;; test apikey as query-string
     (puthash "apikey" (vector apikey-key apikey-value apikey-in) auth)
     (should (equal (postman--build-auth-query-string auth)
-                   '("apikey" "1a2b3c4d")))))
+                   '(("apikey" . "1a2b3c4d"))))))
 
 (ert-deftest postman--parse-item ()
   "Test parsing of an item."
