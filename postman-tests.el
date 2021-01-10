@@ -331,9 +331,9 @@
                  (concat
                   "# Description\n"
                   "# end.\n"
-                  "GET users\n"
                   ":auth := (format \"Basic %s\" (base64-encode-string "
                   "(encode-coding-string \"user1:Password!\" 'utf-8) t))\n"
+                  "GET users\n"
                   "Authorization: :auth\n"
                   "header: value\n"
                   "{\"login\": \"admin\"}\n")))

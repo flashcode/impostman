@@ -230,7 +230,8 @@ METHOD is the HTTP method.
 URL is the URL.
 HEADERS is a alist with HTTP headers.
 BODY is the request body."
-  (let ((list-headers))
+  (let ((list-variables)
+        (list-headers))
     (dolist (header headers)
       (let* ((header-name (car header))
              (header-value (cdr header))
@@ -243,11 +244,13 @@ BODY is the request body."
                      ":auth := (format \"Basic %s\" "
                      "(base64-encode-string (encode-coding-string \""
                      auth-plain "\" 'utf-8) t))")
-                    list-headers)
+                    list-variables)
               (setq new-value ":auth"))))
         (push (concat header-name ": " new-value) list-headers)))
     (concat
      (postman-format-comment description)
+     (when list-variables
+       (concat (string-join (nreverse list-variables) "\n") "\n"))
      method " " url "\n"
      (when list-headers
        (concat (string-join (nreverse list-headers) "\n") "\n"))
