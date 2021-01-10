@@ -78,10 +78,11 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ="
     (end . impostman-output-restclient-end))
   "Emacs restclient output")
 
-(defconst impostman-outputs-alist
+(defcustom impostman-outputs-alist
   '(("verb" . impostman-output-verb-alist)
     ("restclient" . impostman-output-restclient-alist))
-  "Impostman outputs")
+  "Impostman outputs"
+  :type '(alist :key-type string :value-type function))
 
 ;; utility functions
 
