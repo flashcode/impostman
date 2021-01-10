@@ -35,7 +35,7 @@
 
 (require 'subr-x)
 
-;; outputs
+;; customization
 
 (defgroup impostman nil
   "Import Postman collections."
@@ -267,7 +267,7 @@ NAME is the collection name."
   (when (fboundp 'restclient-mode)
     (restclient-mode)))
 
-;; build of headers and query-string
+;; Postman collection parser
 
 (defun impostman--build-auth-headers (auth)
   "Return an alist with headers, based on the `auth' JSON item.
@@ -355,8 +355,6 @@ AUTH is a hash table."
                        (or apikey-key apikey-value))
               (push (cons apikey-key apikey-value) query-string-items))))))
     (nreverse query-string-items)))
-
-;; JSON parser
 
 (defun impostman--parse-item (items level output-alist)
   "Parse a Postman collection item.
