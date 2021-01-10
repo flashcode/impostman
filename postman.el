@@ -130,12 +130,7 @@ NAME is the collection name.
 DESCRIPTION is the collection description."
   (concat
    "* " name "  :verb:\n"
-   (postman-format-comment description)
-   "# template https://example.com/api\n"
-   "# Accept: application/json\n"
-   "# Authorization: Basic {{(base64-encode-string (encode-coding-string "
-   "\"user:pass\" 'utf-8) t)}}\n"
-   "# Content-Type: application/json; charset=utf-8\n"))
+   (postman-format-comment description)))
 
 (defun postman-output-verb-item (level name description)
   "Format a verb item.

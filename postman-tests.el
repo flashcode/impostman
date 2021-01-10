@@ -98,12 +98,7 @@
                  (concat
                   "* test  :verb:\n"
                   "# Description\n"
-                  "# Line 2\n"
-                  "# template https://example.com/api\n"
-                  "# Accept: application/json\n"
-                  "# Authorization: Basic {{(base64-encode-string "
-                  "(encode-coding-string \"user:pass\" 'utf-8) t)}}\n"
-                  "# Content-Type: application/json; charset=utf-8\n"))))
+                  "# Line 2\n"))))
 
 (ert-deftest postman-output-verb-item ()
   "Test the output of verb item."
@@ -587,11 +582,6 @@
         (should (equal result
                        (concat
                         "* unknown  :verb:\n"
-                        "# template https://example.com/api\n"
-                        "# Accept: application/json\n"
-                        "# Authorization: Basic {{(base64-encode-string "
-                        "(encode-coding-string \"user:pass\" 'utf-8) t)}}\n"
-                        "# Content-Type: application/json; charset=utf-8\n"
                         "\n"
                         "* End of unknown\n"
                         "\n"
@@ -609,11 +599,6 @@
         (should (equal result
                        (concat
                         "* my_collection  :verb:\n"
-                        "# template https://example.com/api\n"
-                        "# Accept: application/json\n"
-                        "# Authorization: Basic {{(base64-encode-string "
-                        "(encode-coding-string \"user:pass\" 'utf-8) t)}}\n"
-                        "# Content-Type: application/json; charset=utf-8\n"
                         "\n"
                         "* End of my_collection\n"
                         "\n"
@@ -632,11 +617,6 @@
                         "* my_collection  :verb:\n"
                         "# Description\n"
                         "# Line 2\n"
-                        "# template https://example.com/api\n"
-                        "# Accept: application/json\n"
-                        "# Authorization: Basic {{(base64-encode-string "
-                        "(encode-coding-string \"user:pass\" 'utf-8) t)}}\n"
-                        "# Content-Type: application/json; charset=utf-8\n"
                         "\n"
                         "* End of my_collection\n"
                         "\n"
@@ -655,11 +635,6 @@
                         "* my_collection  :verb:\n"
                         "# Description\n"
                         "# Line 2\n"
-                        "# template https://example.com/api\n"
-                        "# Accept: application/json\n"
-                        "# Authorization: Basic {{(base64-encode-string "
-                        "(encode-coding-string \"user:pass\" 'utf-8) t)}}\n"
-                        "# Content-Type: application/json; charset=utf-8\n"
                         "\n"
                         "* End of my_collection\n"
                         "\n"
