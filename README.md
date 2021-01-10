@@ -178,7 +178,7 @@ Arguments:
   (...))
 ```
 
-Function called at the end.
+Function called at the end. It can be used to enable a major or minor mode.
 
 ## Known limitations
 
