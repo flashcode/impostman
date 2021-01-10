@@ -1,4 +1,4 @@
-;;; impostman-tests.el --- Tests on impostman.el  -*- lexical-binding: t -*-
+;;; impostman-test.el --- Test suite for impostman  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2020-2021 Sébastien Helleu <flashcode@flashtux.org>
 
@@ -28,20 +28,20 @@
 
 ;;; Commentary:
 
-;; Tests on impostman.el
+;; Test suite for impostman.
 
 ;;; Code:
 
 (require 'ert)
 (require 'impostman)
 
-(defun get-file-contents (filename)
+(defun impostman-test--get-file-contents (filename)
   "Get contents of filename."
   (with-temp-buffer
     (insert-file-contents filename)
     (buffer-string)))
 
-(ert-deftest impostman-format-comment ()
+(ert-deftest impostman-test-format-comment ()
   "Test the format of comment."
   ;; without prefix: default is "# "
   (should (equal (impostman-format-comment nil)
@@ -75,7 +75,7 @@
                   ";; Line 2\n"
                   ";; Line 3\n"))))
 
-(ert-deftest impostman-add-query-string-items-to-url ()
+(ert-deftest impostman-test-add-query-string-items-to-url ()
   "Test add of query-string items to an URL."
   (should (equal (impostman-add-query-string-items-to-url
                   "https://example.com" nil)
@@ -87,7 +87,7 @@
                   "https://example.com?a=1" '(("apikey" . "1a2b3c4d")))
                  "https://example.com?a=1&apikey=1a2b3c4d")))
 
-(ert-deftest impostman-get-auth-basic-plain ()
+(ert-deftest impostman-test-get-auth-basic-plain ()
   "Test the base64 decoding of Authorization Basic header."
   (should (equal (impostman-get-auth-basic-plain "")
                  nil))
@@ -99,7 +99,7 @@
                   "Basic dXNlcm5hbWU6cGFzc3dvcmQ=")
                  "username:password")))
 
-(ert-deftest impostman-output-verb-header ()
+(ert-deftest impostman-test-output-verb-header ()
   "Test the output of verb header."
   (should (equal (impostman-output-verb-header "test" "Description\nLine 2")
                  (concat
@@ -107,7 +107,7 @@
                   "# Description\n"
                   "# Line 2\n"))))
 
-(ert-deftest impostman-output-verb-item ()
+(ert-deftest impostman-test-output-verb-item ()
   "Test the output of verb item."
   (should (equal (impostman-output-verb-item 0 "test" "")
                  (concat
@@ -147,7 +147,7 @@
                   "# Description\n"
                   "# end.\n"))))
 
-(ert-deftest impostman-output-verb-request ()
+(ert-deftest impostman-test-output-verb-request ()
   "Test the output of verb request."
   (should (equal (impostman-output-verb-request
                   ""
@@ -219,7 +219,7 @@
                     "header: value\n"
                     "\n{\"login\": \"admin\"}\n")))))
 
-(ert-deftest impostman-output-verb-footer ()
+(ert-deftest impostman-test-output-verb-footer ()
   "Test the output of verb footer."
   (should (equal (impostman-output-verb-footer "test")
                  (concat
@@ -230,7 +230,7 @@
                   "# eval: (verb-mode)\n"
                   "# End:\n"))))
 
-(ert-deftest impostman-output-restclient-header ()
+(ert-deftest impostman-test-output-restclient-header ()
   "Test the output of restclient header."
   (should (equal (impostman-output-restclient-header
                   "test" "Description\nLine 2")
@@ -242,7 +242,7 @@
                   "# Line 2\n"
                   "#\n"))))
 
-(ert-deftest impostman-output-restclient-item ()
+(ert-deftest impostman-test-output-restclient-item ()
   "Test the output of restclient item."
   (should (equal (impostman-output-restclient-item 0 "test" "")
                  (concat
@@ -258,31 +258,35 @@
                   "## test\n")))
   (should (equal (impostman-output-restclient-item 3 "test" "")
                  "### test\n"))
-  (should (equal (impostman-output-restclient-item 0 "test" "Description\nend.")
+  (should (equal (impostman-output-restclient-item
+                  0 "test" "Description\nend.")
                  (concat
                   "\n"
                   "# test\n"
                   "# Description\n"
                   "# end.\n")))
-  (should (equal (impostman-output-restclient-item 1 "test" "Description\nend.")
+  (should (equal (impostman-output-restclient-item
+                  1 "test" "Description\nend.")
                  (concat
                   "\n"
                   "# test\n"
                   "# Description\n"
                   "# end.\n")))
-  (should (equal (impostman-output-restclient-item 2 "test" "Description\nend.")
+  (should (equal (impostman-output-restclient-item
+                  2 "test" "Description\nend.")
                  (concat
                   "\n"
                   "## test\n"
                   "# Description\n"
                   "# end.\n")))
-  (should (equal (impostman-output-restclient-item 3 "test" "Description\nend.")
+  (should (equal (impostman-output-restclient-item
+                  3 "test" "Description\nend.")
                  (concat
                   "### test\n"
                   "# Description\n"
                   "# end.\n"))))
 
-(ert-deftest impostman-output-restclient-request ()
+(ert-deftest impostman-test-output-restclient-request ()
   "Test the output of restclient request."
   (should (equal (impostman-output-restclient-request
                   ""
@@ -355,14 +359,14 @@
                       "header: value\n"
                       "{\"login\": \"admin\"}\n")))))
 
-(ert-deftest impostman-output-restclient-footer ()
+(ert-deftest impostman-test-output-restclient-footer ()
   "Test the output of restclient footer."
   (should (equal (impostman-output-restclient-footer "test")
                  (concat
                   "\n"
                   "# End of test\n"))))
 
-(ert-deftest impostman--build-auth-headers ()
+(ert-deftest impostman-test-build-auth-headers ()
   "Test the build of auth headers."
   (let ((auth (make-hash-table :test 'equal))
         (username #s(hash-table test equal data ("key" "username"
@@ -422,7 +426,7 @@
     (should (equal (impostman--build-auth-headers auth)
                    nil))))
 
-(ert-deftest impostman--build-headers ()
+(ert-deftest impostman-test-build-headers ()
   "Test the build of headers."
   (let ((header1 #s(hash-table test equal data ("key" "header1"
                                                 "value" "value1")))
@@ -444,7 +448,7 @@
                      ("header1" . "value1")
                      ("X-header2" . "the value 2"))))))
 
-(ert-deftest impostman--build-auth-query-string ()
+(ert-deftest impostman-test-build-auth-query-string ()
   "Test build of query-string parameter for authentication."
   (let ((auth (make-hash-table :test 'equal))
         (apikey-key #s(hash-table test equal data ("key" "key"
@@ -463,7 +467,7 @@
     (should (equal (impostman--build-auth-query-string auth)
                    '(("apikey" . "1a2b3c4d"))))))
 
-(ert-deftest impostman--parse-item ()
+(ert-deftest impostman-test-parse-item ()
   "Test parsing of an item."
   (let ((item1 (make-hash-table :test 'equal))
         (request1 (make-hash-table :test 'equal))
@@ -578,7 +582,7 @@
                       "\n"
                       "{\"key\": \"data\"}\n"))))))
 
-(ert-deftest impostman--parse-json ()
+(ert-deftest impostman-test-parse-json ()
   "Test parsing of a JSON collection."
   (let ((collection (make-hash-table :test 'equal))
         (info (make-hash-table :test 'equal)))
@@ -633,20 +637,20 @@
                         "# End:\n"))))
       (kill-this-buffer))))
 
-(defun impostman-output-test-header (name description)
+(defun impostman-test-output-test-header (name description)
   "Format the test header."
   (concat
    "* " name "  :test:\n"
    (impostman-format-comment description)))
 
-(defun impostman-output-test-item (level name description)
+(defun impostman-test-output-test-item (level name description)
   "Format a test item."
   (concat
    (if (<= level 2) "\n" "")
    (make-string (max level 1) ?*) " " name "\n"
    (impostman-format-comment description)))
 
-(defun impostman-output-test-request (description method url headers body)
+(defun impostman-test-output-test-request (description method url headers body)
   "Format a test request."
   (let ((list-headers))
     (dolist (header headers)
@@ -658,26 +662,29 @@
        (concat (string-join (nreverse list-headers) "\n") "\n"))
      (if (string-empty-p body) "" (concat "\n" body "\n")))))
 
-(defun impostman-output-test-footer (name)
+(defun impostman-test-output-test-footer (name)
   "Format the test footer."
   (concat "\n" "* End of " name "\n"))
 
-(ert-deftest impostman-import-file ()
+(ert-deftest impostman-test-import-file ()
   "Test import of a file with a Postman collection."
-  (setq impostman-output-test-alist
+  (setq impostman-test-output-test-alist
         '((init . ignore)
-          (header . impostman-output-test-header)
-          (item . impostman-output-test-item)
-          (request . impostman-output-test-request)
-          (footer . impostman-output-test-footer)
+          (header . impostman-test-output-test-header)
+          (item . impostman-test-output-test-item)
+          (request . impostman-test-output-test-request)
+          (footer . impostman-test-output-test-footer)
           (end . ignore)))
-  (let* ((verb-output (get-file-contents "tests/verb.org"))
-         (restclient-output (get-file-contents "tests/restclient.org"))
-         (test-output (get-file-contents "tests/test.org"))
+  (let* ((verb-output
+          (impostman-test--get-file-contents "tests/verb.org"))
+         (restclient-output
+          (impostman-test--get-file-contents "tests/restclient.org"))
+         (test-output
+          (impostman-test--get-file-contents "tests/test.org"))
          (impostman-outputs-alist
           '(("verb" . impostman-output-verb-alist)
             ("restclient" . impostman-output-restclient-alist)
-            ("test" . impostman-output-test-alist))))
+            ("test" . impostman-test-output-test-alist))))
     (save-excursion
       (impostman-import-file "tests/collection.json" "verb")
       (should (string-prefix-p "test.org" (buffer-name)))
@@ -698,23 +705,27 @@
       (kill-this-buffer)))
   (makunbound 'impostman-output-test-alist))
 
-(ert-deftest impostman-import-string ()
+(ert-deftest impostman-test-import-string ()
   "Test import of a string with a Postman collection."
-  (setq impostman-output-test-alist
+  (setq impostman-test-output-test-alist
         '((init . ignore)
-          (header . impostman-output-test-header)
-          (item . impostman-output-test-item)
-          (request . impostman-output-test-request)
-          (footer . impostman-output-test-footer)
+          (header . impostman-test-output-test-header)
+          (item . impostman-test-output-test-item)
+          (request . impostman-test-output-test-request)
+          (footer . impostman-test-output-test-footer)
           (end . ignore)))
-  (let* ((collection (get-file-contents "tests/collection.json"))
-         (verb-output (get-file-contents "tests/verb.org"))
-         (restclient-output (get-file-contents "tests/restclient.org"))
-         (test-output (get-file-contents "tests/test.org"))
+  (let* ((collection
+          (impostman-test--get-file-contents "tests/collection.json"))
+         (verb-output
+          (impostman-test--get-file-contents "tests/verb.org"))
+         (restclient-output
+          (impostman-test--get-file-contents "tests/restclient.org"))
+         (test-output
+          (impostman-test--get-file-contents "tests/test.org"))
          (impostman-outputs-alist
           '(("verb" . impostman-output-verb-alist)
             ("restclient" . impostman-output-restclient-alist)
-            ("test" . impostman-output-test-alist))))
+            ("test" . impostman-test-output-test-alist))))
     (save-excursion
       (impostman-import-string collection "verb")
       (should (string-prefix-p "test.org" (buffer-name)))
@@ -735,6 +746,6 @@
       (kill-this-buffer)))
   (makunbound 'impostman-output-test-alist))
 
-(provide 'impostman-tests)
+(provide 'impostman-test)
 
-;;; impostman-tests.el ends here
+;;; impostman-test.el ends here
