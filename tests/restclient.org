@@ -1,0 +1,29 @@
+# -*- restclient -*-
+#
+# test
+# This is the description of the test collection.
+# End.
+#
+
+## get users, no auth
+GET https://localhost/api/users
+
+## get users, no auth (with description)
+# This is the description.
+# Line 2 of description.
+# Line 3: End.
+GET https://localhost/api/users
+
+## get users, auth basic
+:auth := (format "Basic %s" (base64-encode-string (encode-coding-string "user1:Password!" 'utf-8) t))
+GET https://localhost/api/users
+Authorization: :auth
+
+## get users, api key header
+GET https://localhost/api/users
+mykey: myvalue
+
+## get users, api key query string
+GET https://localhost/api/users/?fields=username&mykey=myvalue
+
+# End of test

@@ -387,19 +387,18 @@ OUTPUT-ALIST is an alist with the output callbacks."
                      (alist-get 'request output-alist)
                      description method url headers body))))))))
 
-(defun postman--parse-json (collection output-alist &optional buffer-name)
+(defun postman--parse-json (collection output-alist)
   "Parse a Postman collection.
 
 COLLECTION is a hash table (parsed JSON).
-OUTPUT-ALIST is an alist with the output callbacks.
-BUFFER-NAME is the name of the output buffer."
+OUTPUT-ALIST is an alist with the output callbacks."
   (let ((name (gethash "name"
                        (gethash "info" collection (make-hash-table))
                        "unknown"))
         (description (gethash "description"
                               (gethash "info"
                                        collection (make-hash-table)) "")))
-    (pop-to-buffer (generate-new-buffer (or buffer-name "api.org")))
+    (pop-to-buffer (generate-new-buffer (concat name ".org")))
     (funcall (alist-get 'init output-alist))
     (insert (funcall (alist-get 'header output-alist) name description))
     (postman--parse-item (gethash "item" collection) 2 output-alist)
@@ -413,13 +412,11 @@ BUFFER-NAME is the name of the output buffer."
 
 FILENAME is a filename with a Postman collection.
 OUTPUT-ALIST is an alist with the output callbacks."
-  (with-temp-buffer
-    (insert-file-contents filename)
-    (let ((collection (json-parse-buffer)))
-      (postman--parse-json
-       collection
-       output-alist
-       (concat (file-name-nondirectory filename) ".org")))))
+  (let ((collection))
+    (with-temp-buffer
+      (insert-file-contents filename)
+      (setq collection (json-parse-buffer)))
+    (postman--parse-json collection output-alist)))
 
 ;;;###autoload
 (defun postman-parse-string (string output-alist)

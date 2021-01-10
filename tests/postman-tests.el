@@ -578,6 +578,7 @@
     ;; empty collection
     (save-excursion
       (postman--parse-json collection postman-output-verb-alist)
+      (should (string-prefix-p "unknown.org" (buffer-name)))
       (let ((result (buffer-string)))
         (should (equal result
                        (concat
@@ -594,7 +595,7 @@
     (puthash "info" info collection)
     (save-excursion
       (postman--parse-json collection postman-output-verb-alist)
-      (should (string-prefix-p "api.org" (buffer-name)))
+      (should (string-prefix-p "my_collection.org" (buffer-name)))
       (let ((result (buffer-string)))
         (should (equal result
                        (concat
@@ -610,24 +611,6 @@
     (puthash "description" "Description\nLine 2" info)
     (save-excursion
       (postman--parse-json collection postman-output-verb-alist)
-      (should (string-prefix-p "api.org" (buffer-name)))
-      (let ((result (buffer-string)))
-        (should (equal result
-                       (concat
-                        "* my_collection  :verb:\n"
-                        "# Description\n"
-                        "# Line 2\n"
-                        "\n"
-                        "* End of my_collection\n"
-                        "\n"
-                        "# Local Variables:\n"
-                        "# eval: (verb-mode)\n"
-                        "# End:\n"))))
-      (kill-this-buffer))
-    ;; force a buffer name
-    (save-excursion
-      (postman--parse-json
-       collection postman-output-verb-alist "my_collection.org")
       (should (string-prefix-p "my_collection.org" (buffer-name)))
       (let ((result (buffer-string)))
         (should (equal result
@@ -641,6 +624,56 @@
                         "# Local Variables:\n"
                         "# eval: (verb-mode)\n"
                         "# End:\n"))))
+      (kill-this-buffer))))
+
+(ert-deftest postman-export-file ()
+  "Test export of a Postman collection (file)."
+  (let ((verb-output)
+        (restclient-output))
+    (with-temp-buffer
+      (insert-file-contents "tests/verb.org")
+      (setq verb-output (buffer-string)))
+    (with-temp-buffer
+      (insert-file-contents "tests/restclient.org")
+      (setq restclient-output (buffer-string)))
+    (save-excursion
+      (postman-export-file "tests/collection.json" "verb")
+      (should (string-prefix-p "test.org" (buffer-name)))
+      (let ((result (buffer-string)))
+        (should (equal result verb-output)))
+      (kill-this-buffer))
+    (save-excursion
+      (postman-export-file "tests/collection.json" "restclient")
+      (should (string-prefix-p "test.org" (buffer-name)))
+      (let ((result (buffer-string)))
+        (should (equal result restclient-output)))
+      (kill-this-buffer))))
+
+(ert-deftest postman-export-string ()
+  "Test export of a Postman collection (string)."
+  (let ((collection)
+        (verb-output)
+        (restclient-output))
+    (with-temp-buffer
+      (insert-file-contents "tests/collection.json")
+      (setq collection (buffer-string)))
+    (with-temp-buffer
+      (insert-file-contents "tests/verb.org")
+      (setq verb-output (buffer-string)))
+    (with-temp-buffer
+      (insert-file-contents "tests/restclient.org")
+      (setq restclient-output (buffer-string)))
+    (save-excursion
+      (postman-export-string collection "verb")
+      (should (string-prefix-p "test.org" (buffer-name)))
+      (let ((result (buffer-string)))
+        (should (equal result verb-output)))
+      (kill-this-buffer))
+    (save-excursion
+      (postman-export-string collection "restclient")
+      (should (string-prefix-p "test.org" (buffer-name)))
+      (let ((result (buffer-string)))
+        (should (equal result restclient-output)))
       (kill-this-buffer))))
 
 ;;; postman-tests.el ends here

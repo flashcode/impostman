@@ -23,7 +23,7 @@ RM ?= rm -f
 all: compile test
 
 test: clean
-	$(EMACS) -Q -batch -L . -l postman -l postman-tests -f ert-run-tests-batch-and-exit
+	$(EMACS) -Q -batch -L . -l postman -l tests/postman-tests -f ert-run-tests-batch-and-exit
 
 compile:
 	$(EMACS) -Q -batch -f batch-byte-compile postman.el
