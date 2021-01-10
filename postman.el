@@ -242,7 +242,7 @@ BODY is the request body."
               (push (concat
                      ":auth := (format \"Basic %s\" "
                      "(base64-encode-string (encode-coding-string \""
-                     auth-plain "\" 'utf-8) t)")
+                     auth-plain "\" 'utf-8) t))")
                     list-headers)
               (setq new-value ":auth"))))
         (push (concat header-name ": " new-value) list-headers)))
