@@ -89,12 +89,12 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ="
 COMMENT is a string, where multiple lines are separated by \"\\n\".
 PREFIX is the prefix to add in front of each line (default is \"# \")."
   (let ((comment (or comment ""))
-        (str-prefix (or prefix "# ")))
+        (prefix (or prefix "# ")))
     (if (string-empty-p comment)
         ""
       (concat
-       str-prefix
-       (replace-regexp-in-string "\n" (concat "\n" str-prefix) comment)
+       prefix
+       (replace-regexp-in-string "\n" (concat "\n" prefix) comment)
        "\n"))))
 
 (defun postman-add-query-string-to-url (url query-string)
