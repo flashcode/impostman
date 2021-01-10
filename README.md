@@ -1,13 +1,13 @@
-# Convert Postman collections to Emacs HTTP clients
+# Export Postman collections to Emacs HTTP clients
 
 [![Build Status](https://github.com/flashcode/postman-to-emacs/workflows/CI/badge.svg)](https://github.com/flashcode/postman-to-emacs/actions?query=workflow%3A%22CI%22)
 
-Postman collections can be converted to these Emacs HTTP clients:
+Postman collections can be exported to these Emacs HTTP clients:
 
 - [verb](https://github.com/federicotdn/verb)
 - [restclient.el](https://github.com/pashky/restclient.el)
 
-You can use your own functions to convert to other formats (see [Add new output](#add-new-output).
+You can use your own functions to export to other formats (see [Add new output](#add-new-output).
 
 ## Installation
 
@@ -24,12 +24,12 @@ You can deploy postman.el into your site-lisp as usual, then add this line to yo
 
 ## Usage
 
-Two functions can be called interactively to convert a Postman collection:
+Two functions can be called interactively to export a Postman collection:
 
-- <kbd>M-x</kbd> `postman-convert-file` <kbd>RET</kbd>
-- <kbd>M-x</kbd> `postman-convert-string` <kbd>RET</kbd>
+- <kbd>M-x</kbd> `postman-export-file` <kbd>RET</kbd>
+- <kbd>M-x</kbd> `postman-export-string` <kbd>RET</kbd>
 
-The function `postman-convert-file` takes two optional parameters (they are asked if not provided):
+The function `postman-export-file` takes two optional parameters (they are asked if not provided):
 
 - `filename` (optional): the Postman collection
 - `output` (optional): the output type (`verb` or `restclient`)
@@ -37,10 +37,10 @@ The function `postman-convert-file` takes two optional parameters (they are aske
 Example:
 
 ```elisp
-(postman-convert-file "/path/to/collection.json" "verb")
+(postman-export-file "/path/to/collection.json" "verb")
 ```
 
-The function `postman-convert-string` takes two parameters (the second is optional and asked if not provided):
+The function `postman-export-string` takes two parameters (the second is optional and asked if not provided):
 
 - `string`: the string with the collection (JSON format)
 - `output` (optional): the output type (`verb` or `restclient`)
@@ -48,7 +48,7 @@ The function `postman-convert-string` takes two parameters (the second is option
 Example:
 
 ```elisp
-(postman-convert-string "{}" "verb")
+(postman-export-string "{}" "verb")
 ```
 
 The result is displayed in a new buffer with the Emacs HTTP client, and the mode is set to:

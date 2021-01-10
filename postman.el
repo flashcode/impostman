@@ -1,4 +1,4 @@
-;;; postman.el --- Convert Postman collections to Emacs HTTP clients  -*- lexical-binding: t -*-
+;;; postman.el --- Export Postman collections to Emacs HTTP clients  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2020-2021 Sébastien Helleu <flashcode@flashtux.org>
 
@@ -27,7 +27,7 @@
 
 ;;; Commentary:
 
-;; Convert Postman collections to Emacs HTTP clients: verb and restclient.
+;; Export Postman collections to Emacs HTTP clients: verb and restclient.
 
 ;;; Code:
 
@@ -36,7 +36,7 @@
 ;; outputs
 
 (defgroup postman nil
-  "Convert Postman collections to Emacs HTTP clients."
+  "Export Postman collections to Emacs HTTP clients."
   :prefix "postman-"
   :group 'tools)
 
@@ -469,8 +469,8 @@ anything."
       (error "Unknown output name"))))
 
 ;;;###autoload
-(defun postman-convert-file (&optional filename output-name)
-  "Convert a file with a Postman collection.
+(defun postman-export-file (&optional filename output-name)
+  "Export a file with a Postman collection.
 
 FILENAME is a Postman collection file.
 OUTPUT-NAME is a string with the desired output: \"verb\" or \"restclient\"."
@@ -481,8 +481,8 @@ OUTPUT-NAME is a string with the desired output: \"verb\" or \"restclient\"."
     (postman-parse-file filename output-alist)))
 
 ;;;###autoload
-(defun postman-convert-string (string &optional output-name)
-  "Convert a string with a Postman collection.
+(defun postman-export-string (string &optional output-name)
+  "Export a string with a Postman collection.
 
 STRING is a string with a Postman collection (JSON).
 OUTPUT-NAME is a string with the desired output: \"verb\" or \"restclient\"."
