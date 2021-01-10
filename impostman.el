@@ -1,4 +1,4 @@
-;;; postman.el --- Export Postman collections to Emacs HTTP clients  -*- lexical-binding: t -*-
+;;; impostman.el --- Import Postman collections in Emacs  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2020-2021 Sébastien Helleu <flashcode@flashtux.org>
 
@@ -11,23 +11,24 @@
 
 ;; This file is not part of GNU Emacs.
 
-;; Postman-to-emacs is free software: you can redistribute it and/or modify
+;; Impostman is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
 ;;
-;; Postman-to-emacs is distributed in the hope that it will be useful,
+;; Impostman is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
 ;;
 ;; You should have received a copy of the GNU General Public License
-;; along with Postman-to-emacs.  If not, see <https://www.gnu.org/licenses/>.
+;; along with Impostman.  If not, see <https://www.gnu.org/licenses/>.
 ;;
 
 ;;; Commentary:
 
-;; Export Postman collections to Emacs HTTP clients: verb and restclient.
+;; Import Postman collections in Emacs to use them with HTTP clients:
+;; verb, restclient or your custom output.
 
 ;;; Code:
 
@@ -35,12 +36,12 @@
 
 ;; outputs
 
-(defgroup postman nil
-  "Export Postman collections to Emacs HTTP clients."
-  :prefix "postman-"
+(defgroup impostman nil
+  "Import Postman collections in Emacs."
+  :prefix "impostman-"
   :group 'tools)
 
-(defcustom postman-auth-basic-as-elisp-code t
+(defcustom impostman-auth-basic-as-elisp-code t
   "Convert Basic authentication header to elisp code so that the username
 and password can be easily edited.
 
@@ -55,35 +56,35 @@ If nil, the username and password are directly encoded in base64:
 Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ="
   :type 'boolean)
 
-(defconst postman-version "0.1.0"
-  "Postman-to-emacs package version")
+(defconst impostman-version "0.1.0"
+  "Impostman package version")
 
-(defconst postman-outputs-alist
-  '(("verb" . postman-output-verb-alist)
-    ("restclient" . postman-output-restclient-alist))
+(defconst impostman-outputs-alist
+  '(("verb" . impostman-output-verb-alist)
+    ("restclient" . impostman-output-restclient-alist))
   "The different supported outputs")
 
-(defconst postman-output-verb-alist
+(defconst impostman-output-verb-alist
   '((init . ignore)
-    (header . postman-output-verb-header)
-    (item . postman-output-verb-item)
-    (request . postman-output-verb-request)
-    (footer . postman-output-verb-footer)
-    (end . postman-output-verb-end))
+    (header . impostman-output-verb-header)
+    (item . impostman-output-verb-item)
+    (request . impostman-output-verb-request)
+    (footer . impostman-output-verb-footer)
+    (end . impostman-output-verb-end))
   "Emacs verb output")
 
-(defconst postman-output-restclient-alist
+(defconst impostman-output-restclient-alist
   '((init . ignore)
-    (header . postman-output-restclient-header)
-    (item . postman-output-restclient-item)
-    (request . postman-output-restclient-request)
-    (footer . postman-output-restclient-footer)
-    (end . postman-output-restclient-end))
+    (header . impostman-output-restclient-header)
+    (item . impostman-output-restclient-item)
+    (request . impostman-output-restclient-request)
+    (footer . impostman-output-restclient-footer)
+    (end . impostman-output-restclient-end))
   "Emacs restclient output")
 
 ;; utility functions
 
-(defun postman-format-comment (comment &optional prefix)
+(defun impostman-format-comment (comment &optional prefix)
   "Format a comment, which can be on multiple lines.
 
 COMMENT is a string, where multiple lines are separated by \"\\n\".
@@ -97,7 +98,7 @@ PREFIX is the prefix to add in front of each line (default is \"# \")."
        (replace-regexp-in-string "\n" (concat "\n" prefix) comment)
        "\n"))))
 
-(defun postman-add-query-string-items-to-url (url query-string-items)
+(defun impostman-add-query-string-items-to-url (url query-string-items)
   "Return the URL with updated query string parameters.
 
 URL is a string.
@@ -111,7 +112,7 @@ QUERY-STRING is nil or an alist with query strings to add."
                (cdr query-string))))
   url)
 
-(defun postman-get-auth-basic-plain (authorization)
+(defun impostman-get-auth-basic-plain (authorization)
   "Get the plain-text \"username:password\" with the value of the
 Authorization header, if it is Basic authentication.
 For example with the value \"Basic dXNlcm5hbWU6cGFzc3dvcmQ=\",
@@ -123,16 +124,16 @@ Return nil if the authentication is not Basic or if the base64 is invalid."
 
 ;; verb output
 
-(defun postman-output-verb-header (name description)
+(defun impostman-output-verb-header (name description)
   "Format the verb header.
 
 NAME is the collection name.
 DESCRIPTION is the collection description."
   (concat
    "* " name "  :verb:\n"
-   (postman-format-comment description)))
+   (impostman-format-comment description)))
 
-(defun postman-output-verb-item (level name description)
+(defun impostman-output-verb-item (level name description)
   "Format a verb item.
 
 LEVEL is the level.
@@ -141,9 +142,9 @@ DESCRIPTION is the item description."
   (concat
    (if (<= level 2) "\n" "")
    (make-string (max level 1) ?*) " " name "\n"
-   (postman-format-comment description)))
+   (impostman-format-comment description)))
 
-(defun postman-output-verb-request (description method url headers body)
+(defun impostman-output-verb-request (description method url headers body)
   "Format a verb request.
 
 DESCRIPTION is the request description.
@@ -156,9 +157,9 @@ BODY is the request body."
       (let* ((header-name (car header))
              (header-value (cdr header))
              (new-value header-value))
-        (when (and postman-auth-basic-as-elisp-code
+        (when (and impostman-auth-basic-as-elisp-code
                    (string= header-name "Authorization"))
-          (let ((auth-plain (postman-get-auth-basic-plain header-value)))
+          (let ((auth-plain (impostman-get-auth-basic-plain header-value)))
             (when auth-plain
               (setq new-value
                     (concat
@@ -167,13 +168,13 @@ BODY is the request body."
                      auth-plain "\" 'utf-8) t)}}")))))
         (push (concat header-name ": " new-value) list-headers)))
     (concat
-     (postman-format-comment description)
+     (impostman-format-comment description)
      (downcase method) " " url "\n"
      (when list-headers
        (concat (string-join (nreverse list-headers) "\n") "\n"))
      (if (string-empty-p body) "" (concat "\n" body "\n")))))
 
-(defun postman-output-verb-footer (name)
+(defun impostman-output-verb-footer (name)
   "Format the verb footer.
 
 NAME is the collection name."
@@ -185,7 +186,7 @@ NAME is the collection name."
    "# eval: (verb-mode)\n"
    "# End:\n"))
 
-(defun postman-output-verb-end ()
+(defun impostman-output-verb-end ()
   "Function evaluated at the end."
   (when (fboundp 'org-mode)
     (org-mode))
@@ -194,7 +195,7 @@ NAME is the collection name."
 
 ;; restclient output
 
-(defun postman-output-restclient-header (name description)
+(defun impostman-output-restclient-header (name description)
   "Format the restclient header.
 
 NAME is the collection name.
@@ -203,10 +204,10 @@ DESCRIPTION is the collection description."
    "# -*- restclient -*-\n"
    "#\n"
    "# " name "\n"
-   (postman-format-comment description)
+   (impostman-format-comment description)
    "#\n"))
 
-(defun postman-output-restclient-item (level name description)
+(defun impostman-output-restclient-item (level name description)
   "Format a restclient item.
 
 LEVEL is the level.
@@ -215,9 +216,9 @@ DESCRIPTION is the item description."
   (concat
    (if (<= level 2) "\n" "")
    (make-string (max level 1) ?#) " " name "\n"
-   (postman-format-comment description)))
+   (impostman-format-comment description)))
 
-(defun postman-output-restclient-request (description method url headers body)
+(defun impostman-output-restclient-request (description method url headers body)
   "Format a restclient request.
 
 DESCRIPTION is the request description.
@@ -231,9 +232,9 @@ BODY is the request body."
       (let* ((header-name (car header))
              (header-value (cdr header))
              (new-value header-value))
-        (when (and postman-auth-basic-as-elisp-code
+        (when (and impostman-auth-basic-as-elisp-code
                    (string= header-name "Authorization"))
-          (let ((auth-plain (postman-get-auth-basic-plain header-value)))
+          (let ((auth-plain (impostman-get-auth-basic-plain header-value)))
             (when auth-plain
               (push (concat
                      ":auth := (format \"Basic %s\" "
@@ -243,7 +244,7 @@ BODY is the request body."
               (setq new-value ":auth"))))
         (push (concat header-name ": " new-value) list-headers)))
     (concat
-     (postman-format-comment description)
+     (impostman-format-comment description)
      (when list-variables
        (concat (string-join (nreverse list-variables) "\n") "\n"))
      method " " url "\n"
@@ -251,7 +252,7 @@ BODY is the request body."
        (concat (string-join (nreverse list-headers) "\n") "\n"))
      (if (string-empty-p body) "" (concat body "\n")))))
 
-(defun postman-output-restclient-footer (name)
+(defun impostman-output-restclient-footer (name)
   "Format the restclient footer.
 
 NAME is the collection name."
@@ -259,14 +260,14 @@ NAME is the collection name."
    "\n"
    "# End of " name "\n"))
 
-(defun postman-output-restclient-end ()
+(defun impostman-output-restclient-end ()
   "Function evaluated at the end."
   (when (fboundp 'restclient-mode)
     (restclient-mode)))
 
 ;; build of headers and query-string
 
-(defun postman--build-auth-headers (auth)
+(defun impostman--build-auth-headers (auth)
   "Return an alist with headers, based on the `auth' JSON item.
 
 AUTH is a hash table."
@@ -311,7 +312,7 @@ AUTH is a hash table."
                (push (cons apikey-key apikey-value) headers)))))
     (nreverse headers)))
 
-(defun postman--build-headers (header)
+(defun impostman--build-headers (header)
   "Return an alist with headers, based on the `header' JSON item.
 
 HEADER is a vector with hash tables."
@@ -322,7 +323,7 @@ HEADER is a vector with hash tables."
         (push (cons key value) headers)))
     (nreverse headers)))
 
-(defun postman--build-auth-query-string (auth)
+(defun impostman--build-auth-query-string (auth)
   "Return query string parameter to add for authentication as an alist, for
 example: (\"key\" . \"value\"), or nil if there's no query string to add.
 
@@ -351,7 +352,7 @@ AUTH is a hash table."
 
 ;; JSON parser
 
-(defun postman--parse-item (items level output-alist)
+(defun impostman--parse-item (items level output-alist)
   "Parse a Postman collection item.
 
 ITEMS is the \"item\" read from collection (vector).
@@ -365,7 +366,7 @@ OUTPUT-ALIST is an alist with the output callbacks."
       (insert (funcall (alist-get 'item output-alist)
                        level name description))
       (if subitem
-          (postman--parse-item subitem (1+ level) output-alist)
+          (impostman--parse-item subitem (1+ level) output-alist)
         (when request
           (let* ((description (gethash "description" request ""))
                  (auth (gethash "auth" request (make-hash-table)))
@@ -377,17 +378,17 @@ OUTPUT-ALIST is an alist with the output callbacks."
                  (url (gethash
                        "raw"
                        (gethash "url" request (make-hash-table)) ""))
-                 (auth-headers (postman--build-auth-headers auth))
-                 (other-headers (postman--build-headers header))
+                 (auth-headers (impostman--build-auth-headers auth))
+                 (other-headers (impostman--build-headers header))
                  (headers (append auth-headers other-headers)))
-            (setq url (postman-add-query-string-items-to-url
+            (setq url (impostman-add-query-string-items-to-url
                        url
-                       (postman--build-auth-query-string auth)))
+                       (impostman--build-auth-query-string auth)))
             (insert (funcall
                      (alist-get 'request output-alist)
                      description method url headers body))))))))
 
-(defun postman--parse-json (collection output-alist)
+(defun impostman--parse-json (collection output-alist)
   "Parse a Postman collection.
 
 COLLECTION is a hash table (parsed JSON).
@@ -401,13 +402,13 @@ OUTPUT-ALIST is an alist with the output callbacks."
     (pop-to-buffer (generate-new-buffer (concat name ".org")))
     (funcall (alist-get 'init output-alist))
     (insert (funcall (alist-get 'header output-alist) name description))
-    (postman--parse-item (gethash "item" collection) 2 output-alist)
+    (impostman--parse-item (gethash "item" collection) 2 output-alist)
     (insert (funcall (alist-get 'footer output-alist) name))
     (goto-char (point-min))
     (funcall (alist-get 'end output-alist))))
 
 ;;;###autoload
-(defun postman-parse-file (filename output-alist)
+(defun impostman-parse-file (filename output-alist)
   "Parse a file with a Postman collection.
 
 FILENAME is a filename with a Postman collection.
@@ -416,69 +417,69 @@ OUTPUT-ALIST is an alist with the output callbacks."
     (with-temp-buffer
       (insert-file-contents filename)
       (setq collection (json-parse-buffer)))
-    (postman--parse-json collection output-alist)))
+    (impostman--parse-json collection output-alist)))
 
 ;;;###autoload
-(defun postman-parse-string (string output-alist)
+(defun impostman-parse-string (string output-alist)
   "Parse a string with a Postman collection.
 
 STRING is a Postman collection (JSON format).
 OUTPUT-ALIST is an alist with the output callbacks."
   (let ((collection (json-parse-string string)))
-    (postman--parse-json collection output-alist)))
+    (impostman--parse-json collection output-alist)))
 
-;; export of Postman collection
+;; Postman collection import
 
-(defun postman-read-filename ()
+(defun impostman-read-filename ()
   "Read Postman collection filename."
   (interactive)
   (read-file-name "Postman collection file (JSON): "))
 
-(defun postman-read-output ()
+(defun impostman-read-output ()
   "Read Postman output type, which must be a key from alist
-`postman-outputs-alist'.
+`impostman-outputs-alist'.
 
 If the alist size is 1, the value is immediately returned without asking
 anything."
   (interactive)
-  (let* ((default (caar postman-outputs-alist))
+  (let* ((default (caar impostman-outputs-alist))
          (prompt (concat "Output format (default is " default "): ")))
-    (if (= (length postman-outputs-alist) 1)
+    (if (= (length impostman-outputs-alist) 1)
         default
       (completing-read
-       prompt postman-outputs-alist nil t nil nil default))))
+       prompt impostman-outputs-alist nil t nil nil default))))
 
-(defun postman--get-output-alist (name)
+(defun impostman--get-output-alist (name)
   "Get output alist with a given NAME. A key with this name must exist in
-`postman-outputs-alist'."
-  (let ((output-alist (assoc name postman-outputs-alist)))
+`impostman-outputs-alist'."
+  (let ((output-alist (assoc name impostman-outputs-alist)))
     (if output-alist
         (symbol-value (cdr output-alist))
       (error (format "Output \"%s\" is not supported" name)))))
 
 ;;;###autoload
-(defun postman-export-file (&optional filename output-name)
-  "Export a file with a Postman collection.
+(defun impostman-import-file (&optional filename output-name)
+  "Import a file with a Postman collection.
 
 FILENAME is a Postman collection file.
 OUTPUT-NAME is a string with the desired output: \"verb\" or \"restclient\"."
   (interactive)
-  (let* ((filename (or filename (postman-read-filename)))
-         (output-name (or output-name (postman-read-output)))
-         (output-alist (postman--get-output-alist output-name)))
-    (postman-parse-file filename output-alist)))
+  (let* ((filename (or filename (impostman-read-filename)))
+         (output-name (or output-name (impostman-read-output)))
+         (output-alist (impostman--get-output-alist output-name)))
+    (impostman-parse-file filename output-alist)))
 
 ;;;###autoload
-(defun postman-export-string (string &optional output-name)
-  "Export a string with a Postman collection.
+(defun impostman-import-string (string &optional output-name)
+  "Import a string with a Postman collection.
 
 STRING is a string with a Postman collection (JSON).
 OUTPUT-NAME is a string with the desired output: \"verb\" or \"restclient\"."
   (interactive)
-  (let* ((output-name (or output-name (postman-read-output)))
-         (output-alist (postman--get-output-alist output-name)))
-    (postman-parse-string string output-alist)))
+  (let* ((output-name (or output-name (impostman-read-output)))
+         (output-alist (impostman--get-output-alist output-name)))
+    (impostman-parse-string string output-alist)))
 
-(provide 'postman)
+(provide 'impostman)
 
-;;; postman.el ends here
+;;; impostman.el ends here

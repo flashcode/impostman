@@ -1,4 +1,4 @@
-# Postman-to-emacs ChangeLog
+# Impostman ChangeLog
 
 ## Version 0.1.0 (under dev)
 

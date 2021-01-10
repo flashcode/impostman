@@ -1,13 +1,13 @@
-# Export Postman collections to Emacs HTTP clients
+# Import of Postman collections in Emacs
 
-[![Build Status](https://github.com/flashcode/postman-to-emacs/workflows/CI/badge.svg)](https://github.com/flashcode/postman-to-emacs/actions?query=workflow%3A%22CI%22)
+[![Build Status](https://github.com/flashcode/impostman/workflows/CI/badge.svg)](https://github.com/flashcode/impostman/actions?query=workflow%3A%22CI%22)
 
-Postman collections can be exported to these Emacs HTTP clients:
+Postman collections can be imported and used with these Emacs HTTP clients:
 
 - [verb](https://github.com/federicotdn/verb)
 - [restclient.el](https://github.com/pashky/restclient.el)
 
-You can use your own functions to export to other formats (see [Add new output](#add-new-output).
+You can use your own functions to write other formats (see [Add new output](#add-new-output).
 
 ## Installation
 
@@ -16,20 +16,20 @@ This package requires:
 - Emacs ≥ **27.1** (it uses the native support for JSON introduced in Emacs 27)
 - [verb](https://github.com/federicotdn/verb) or [restclient](https://github.com/pashky/restclient.el)
 
-You can deploy postman.el into your site-lisp as usual, then add this line to your Emacs initialization file:
+You can deploy impostman.el into your site-lisp as usual, then add this line to your Emacs initialization file:
 
 ```elisp
-(require 'postman)
+(require 'impostman)
 ```
 
 ## Usage
 
-Two functions can be called interactively to export a Postman collection:
+Two functions can be called interactively to import a Postman collection:
 
-- <kbd>M-x</kbd> `postman-export-file` <kbd>RET</kbd>
-- <kbd>M-x</kbd> `postman-export-string` <kbd>RET</kbd>
+- <kbd>M-x</kbd> `impostman-import-file` <kbd>RET</kbd>
+- <kbd>M-x</kbd> `impostman-import-string` <kbd>RET</kbd>
 
-The function `postman-export-file` takes two optional parameters (they are asked if not provided):
+The function `impostman-import-file` takes two optional parameters (they are asked if not provided):
 
 - `filename` (optional): the Postman collection
 - `output` (optional): the output type (`verb` or `restclient`)
@@ -37,10 +37,10 @@ The function `postman-export-file` takes two optional parameters (they are asked
 Example:
 
 ```elisp
-(postman-export-file "/path/to/collection.json" "verb")
+(impostman-import-file "/path/to/collection.json" "verb")
 ```
 
-The function `postman-export-string` takes two parameters (the second is optional and asked if not provided):
+The function `impostman-import-string` takes two parameters (the second is optional and asked if not provided):
 
 - `string`: the string with the collection (JSON format)
 - `output` (optional): the output type (`verb` or `restclient`)
@@ -48,7 +48,7 @@ The function `postman-export-string` takes two parameters (the second is optiona
 Example:
 
 ```elisp
-(postman-export-string "{}" "verb")
+(impostman-import-string "{}" "verb")
 ```
 
 The result is displayed in a new buffer with the Emacs HTTP client, and the mode is set to:
@@ -59,7 +59,7 @@ The result is displayed in a new buffer with the Emacs HTTP client, and the mode
 ## Customization
 
 Some options can be customized to alter the output, you can list and change them with:
-<kbd>M-x</kbd> `customize-group` <kbd>RET</kbd> `postman` <kbd>RET</kbd>.
+<kbd>M-x</kbd> `customize-group` <kbd>RET</kbd> `impostman` <kbd>RET</kbd>.
 
 ## Add new output
 
@@ -68,13 +68,13 @@ Two low-level functions can also be called (non interactively), with a custom ou
 This alist must be defined like this, for example if your output is for walkman (another HTTP client for Emacs):
 
 ```elisp
-(defconst my-postman-walkman-alist
-  '((init . my-postman-walkman-init)
-    (header . my-postman-walkman-header)
-    (item . my-postman-walkman-item)
-    (request . my-postman-walkman-request)
-    (footer . my-postman-walkman-footer)
-    (end . my-postman-walkman-end))
+(defconst my-impostman-walkman-alist
+  '((init . my-impostman-walkman-init)
+    (header . my-imimpostman-walkman-header)
+    (item . my-impostman-walkman-item)
+    (request . my-impostman-walkman-request)
+    (footer . my-impostman-walkman-footer)
+    (end . my-impostman-walkman-end))
   "Emacs walkman output")
 ```
 
@@ -83,12 +83,12 @@ Keys are fixed symbols and values are [callback functions](#callback-functions).
 A function can be `ignore`, in this case it is simply ignored, for example if you don't have anything to do for `init` and `end`:
 
 ```elisp
-(defconst my-postman-walkman-alist
+(defconst my-impostman-walkman-alist
   '((init . ignore)
-    (header . my-postman-walkman-header)
-    (item . my-postman-walkman-item)
-    (request . my-postman-walkman-request)
-    (footer . my-postman-walkman-footer)
+    (header . my-impostman-walkman-header)
+    (item . my-impostman-walkman-item)
+    (request . my-impostman-walkman-request)
+    (footer . my-impostman-walkman-footer)
     (end . ignore))
   "Emacs walkman output")
 ```
@@ -96,13 +96,13 @@ A function can be `ignore`, in this case it is simply ignored, for example if yo
 Then you can call for a file:
 
 ```elisp
-(postman-parse-file "~/path/to/collection.json" my-postman-walkman-alist)
+(impostman-parse-file "~/path/to/collection.json" my-impostman-walkman-alist)
 ```
 
 And for a string:
 
 ```elisp
-(postman-parse-string "{}" my-postman-walkman-alist)
+(impostman-parse-string "{}" my-impostman-walkman-alist)
 ```
 
 #### Callback functions
