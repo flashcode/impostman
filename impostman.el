@@ -81,7 +81,7 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ="
 (defconst impostman-outputs-alist
   '(("verb" . impostman-output-verb-alist)
     ("restclient" . impostman-output-restclient-alist))
-  "The different supported outputs")
+  "Impostman outputs")
 
 ;; utility functions
 
