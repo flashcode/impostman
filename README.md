@@ -105,6 +105,14 @@ And for a string:
 (impostman-parse-string "{}" my-impostman-walkman-alist)
 ```
 
+You can also add your output to the list of impostman outputs, so you can use it with `impostman-import-file` and `impostman-import-string`:
+
+```elisp
+(push '("walkman" . my-impostman-walkman-alist) impostman-outputs-alist)
+```
+
+This will put your output at the beginning of the alist, so it will be the default output.
+
 #### Callback functions
 
 ```elisp
