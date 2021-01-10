@@ -18,15 +18,15 @@
 EMACS ?= emacs
 RM ?= rm -f
 
-.PHONY: all test compile clean
+.PHONY: all compile test clean
 
 all: compile test
 
+compile:
+	$(EMACS) -Q -batch --eval "(setq byte-compile-error-on-warn t)" -f batch-byte-compile impostman.el
+
 test: clean
 	$(EMACS) -Q -batch -L . -l impostman -l tests/impostman-tests -f ert-run-tests-batch-and-exit
-
-compile:
-	$(EMACS) -Q -batch -f batch-byte-compile impostman.el
 
 clean:
 	$(RM) *.elc
