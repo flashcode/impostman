@@ -468,7 +468,7 @@ anything."
   "Import a file with a Postman collection.
 
 FILENAME is a Postman collection file.
-OUTPUT-NAME is a string with the desired output: \"verb\" or \"restclient\"."
+OUTPUT-NAME is a string with the desired output (eg: \"verb\")."
   (interactive)
   (let* ((filename (or filename (impostman-read-filename)))
          (output-name (or output-name (impostman-read-output)))
@@ -480,7 +480,7 @@ OUTPUT-NAME is a string with the desired output: \"verb\" or \"restclient\"."
   "Import a string with a Postman collection.
 
 STRING is a string with a Postman collection (JSON).
-OUTPUT-NAME is a string with the desired output: \"verb\" or \"restclient\"."
+OUTPUT-NAME is a string with the desired output (eg: \"verb\")."
   (interactive)
   (let* ((output-name (or output-name (impostman-read-output)))
          (output-alist (impostman--get-output-alist output-name)))
