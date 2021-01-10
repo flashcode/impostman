@@ -264,7 +264,7 @@ NAME is the collection name."
   (when (fboundp 'restclient-mode)
     (restclient-mode)))
 
-;; internal parser
+;; build of headers and query-string
 
 (defun postman--build-auth-headers (auth)
   "Return an alist with headers, based on the `auth' JSON item.
@@ -349,6 +349,8 @@ AUTH is a hash table."
               (push (cons apikey-key apikey-value) query-string-items))))))
     (nreverse query-string-items)))
 
+;; JSON parser
+
 (defun postman--parse-item (items level output-alist)
   "Parse a Postman collection item.
 
@@ -404,8 +406,6 @@ BUFFER-NAME is the name of the output buffer."
     (insert (funcall (alist-get 'footer output-alist) name))
     (goto-char (point-min))
     (funcall (alist-get 'end output-alist))))
-
-;; parse functions
 
 ;;;###autoload
 (defun postman-parse-file (filename output-alist)
