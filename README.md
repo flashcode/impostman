@@ -70,7 +70,7 @@ This alist must be defined like this, for example if your output is for walkman 
 ```elisp
 (defconst my-impostman-walkman-alist
   '((init . my-impostman-walkman-init)
-    (header . my-imimpostman-walkman-header)
+    (header . my-impostman-walkman-header)
     (item . my-impostman-walkman-item)
     (request . my-impostman-walkman-request)
     (footer . my-impostman-walkman-footer)
