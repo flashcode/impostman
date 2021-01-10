@@ -113,7 +113,9 @@ You can also add your output to the list of impostman outputs, so you can use it
 
 This will put your output at the beginning of the alist, so it will be the default output.
 
-#### Callback functions
+### Callback functions
+
+#### init
 
 ```elisp
 (defun xxx-init ()
@@ -121,6 +123,8 @@ This will put your output at the beginning of the alist, so it will be the defau
 ```
 
 Function called when the output buffer is created and before parsing the collection.
+
+#### header
 
 ```elisp
 (defun xxx-header (name description)
@@ -134,6 +138,8 @@ Arguments:
 - `name` (string): collection name (`unknown` if not found)
 - `description` (string): collection description
 
+#### item
+
 ```elisp
 (defun xxx-item (level name description)
   (...))
@@ -146,6 +152,8 @@ Arguments:
 - `level` (integer): folder level (≥ 2)
 - `name` (string): item name
 - `description` (string): item description
+
+#### request
 
 ```elisp
 (defun xxx-request (description method url headers body)
@@ -162,6 +170,8 @@ Arguments:
 - `headers` (alist): request headers
 - `body` (string): request body
 
+#### footer
+
 ```elisp
 (defun xxx-footer (name)
   (...))
@@ -172,6 +182,8 @@ Function called at the end of parsing. It must return a string which is inserted
 Arguments:
 
 - `name` (string): collection name (`unknown` if not found)
+
+#### end
 
 ```elisp
 (defun xxx-end ()
