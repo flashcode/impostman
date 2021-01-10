@@ -457,7 +457,7 @@ anything."
   (let ((output-alist (assoc name postman-outputs-alist)))
     (if output-alist
         (symbol-value (cdr output-alist))
-      (error "Unknown output name"))))
+      (error (format "Output \"%s\" is not supported" name)))))
 
 ;;;###autoload
 (defun postman-export-file (&optional filename output-name)
