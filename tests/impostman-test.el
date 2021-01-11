@@ -748,12 +748,7 @@
 
 (ert-deftest impostman-test-version ()
   "Test Impostman version."
-  (let ((impostman-version-output (impostman-version))
-        (expected-string-version (concat "impostman " impostman-version)))
-    ;; version must include at least 3 digits, separated by dots
-    (should (string-match "^impostman [0-9]+\\.[0-9]+\\.[0-9]+"
-                          impostman-version-output))
-    (should (equal impostman-version-output expected-string-version))))
+  (should (equal (impostman-version) impostman-version)))
 
 (provide 'impostman-test)
 

@@ -494,7 +494,8 @@ PRINT-DEST is the output stream, by default the echo area.
 
 With \\[universal-argument] prefix, output is in the current buffer."
   (interactive (list (if current-prefix-arg (current-buffer) t)))
-  (princ (format "impostman %s" impostman-version) print-dest))
+  (princ (format "impostman %s" impostman-version) print-dest)
+  impostman-version)
 
 (provide 'impostman)
 
