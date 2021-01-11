@@ -86,6 +86,15 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ="
 
 ;; utility functions
 
+(defun impostman-version (&optional print-dest)
+  "Return the Impostman version.
+
+PRINT-DEST is the output stream, by default the echo area.
+
+With \\[universal-argument] prefix, output is in the current buffer."
+  (interactive (list (if current-prefix-arg (current-buffer) t)))
+  (princ (format "impostman %s" impostman-version) print-dest))
+
 (defun impostman-format-comment (comment &optional prefix)
   "Format a comment, which can be on multiple lines.
 
