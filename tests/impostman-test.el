@@ -41,15 +41,6 @@
     (insert-file-contents filename)
     (buffer-string)))
 
-(ert-deftest impostman-test-version ()
-  "Test Impostman version."
-  (let ((impostman-version-output (impostman-version))
-        (expected-string-version (concat "impostman " impostman-version)))
-    ;; version must include at least 3 digits, separated by dots
-    (should (string-match "^impostman [0-9]+\\.[0-9]+\\.[0-9]+"
-                          impostman-version-output))
-    (should (equal impostman-version-output expected-string-version))))
-
 (ert-deftest impostman-test-format-comment ()
   "Test the format of comment."
   ;; without prefix: default is "# "
@@ -83,18 +74,6 @@
                   ";; Test\n"
                   ";; Line 2\n"
                   ";; Line 3\n"))))
-
-(ert-deftest impostman-test-add-query-string-items-to-url ()
-  "Test add of query-string items to an URL."
-  (should (equal (impostman-add-query-string-items-to-url
-                  "https://example.com" nil)
-                 "https://example.com"))
-  (should (equal (impostman-add-query-string-items-to-url
-                  "https://example.com" '(("apikey" . "1a2b3c4d")))
-                 "https://example.com?apikey=1a2b3c4d"))
-  (should (equal (impostman-add-query-string-items-to-url
-                  "https://example.com?a=1" '(("apikey" . "1a2b3c4d")))
-                 "https://example.com?a=1&apikey=1a2b3c4d")))
 
 (ert-deftest impostman-test-get-auth-basic-plain ()
   "Test the base64 decoding of Authorization Basic header."
@@ -476,6 +455,18 @@
     (should (equal (impostman--build-auth-query-string auth)
                    '(("apikey" . "1a2b3c4d"))))))
 
+(ert-deftest impostman-test-add-query-string-items-to-url ()
+  "Test add of query-string items to an URL."
+  (should (equal (impostman--add-query-string-items-to-url
+                  "https://example.com" nil)
+                 "https://example.com"))
+  (should (equal (impostman--add-query-string-items-to-url
+                  "https://example.com" '(("apikey" . "1a2b3c4d")))
+                 "https://example.com?apikey=1a2b3c4d"))
+  (should (equal (impostman--add-query-string-items-to-url
+                  "https://example.com?a=1" '(("apikey" . "1a2b3c4d")))
+                 "https://example.com?a=1&apikey=1a2b3c4d")))
+
 (ert-deftest impostman-test-parse-item ()
   "Test parsing of an item."
   (let ((item1 (make-hash-table :test 'equal))
@@ -754,6 +745,15 @@
         (should (equal result test-output)))
       (kill-this-buffer)))
   (makunbound 'impostman-output-test-alist))
+
+(ert-deftest impostman-test-version ()
+  "Test Impostman version."
+  (let ((impostman-version-output (impostman-version))
+        (expected-string-version (concat "impostman " impostman-version)))
+    ;; version must include at least 3 digits, separated by dots
+    (should (string-match "^impostman [0-9]+\\.[0-9]+\\.[0-9]+"
+                          impostman-version-output))
+    (should (equal impostman-version-output expected-string-version))))
 
 (provide 'impostman-test)
 

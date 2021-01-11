@@ -84,16 +84,7 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ="
   "Impostman outputs"
   :type '(alist :key-type string :value-type function))
 
-;; utility functions
-
-(defun impostman-version (&optional print-dest)
-  "Return the Impostman version.
-
-PRINT-DEST is the output stream, by default the echo area.
-
-With \\[universal-argument] prefix, output is in the current buffer."
-  (interactive (list (if current-prefix-arg (current-buffer) t)))
-  (princ (format "impostman %s" impostman-version) print-dest))
+;; functions common to all outputs
 
 (defun impostman-format-comment (comment &optional prefix)
   "Format a comment, which can be on multiple lines.
@@ -108,20 +99,6 @@ PREFIX is the prefix to add in front of each line (default is \"# \")."
        prefix
        (replace-regexp-in-string "\n" (concat "\n" prefix) comment)
        "\n"))))
-
-(defun impostman-add-query-string-items-to-url (url query-string-items)
-  "Return the URL with updated query string parameters.
-
-URL is a string.
-QUERY-STRING is nil or an alist with query strings to add."
-  (dolist (query-string query-string-items)
-    (setq url (concat
-               url
-               (if (string-match-p "\\?" url) "&" "?")
-               (car query-string)
-               "="
-               (cdr query-string))))
-  url)
 
 (defun impostman-get-auth-basic-plain (authorization)
   "Get the plain-text \"username:password\" with the value of the
@@ -365,6 +342,20 @@ AUTH is a hash table."
               (push (cons apikey-key apikey-value) query-string-items))))))
     (nreverse query-string-items)))
 
+(defun impostman--add-query-string-items-to-url (url query-string-items)
+  "Return the URL with updated query string parameters.
+
+URL is a string.
+QUERY-STRING is nil or an alist with query strings to add."
+  (dolist (query-string query-string-items)
+    (setq url (concat
+               url
+               (if (string-match-p "\\?" url) "&" "?")
+               (car query-string)
+               "="
+               (cdr query-string))))
+  url)
+
 (defun impostman--parse-item (items level output-alist)
   "Parse a Postman collection item.
 
@@ -395,7 +386,7 @@ OUTPUT-ALIST is an alist with the output callbacks."
                  (auth-headers (impostman--build-auth-headers auth))
                  (other-headers (impostman--build-headers header))
                  (headers (append auth-headers other-headers)))
-            (setq url (impostman-add-query-string-items-to-url
+            (setq url (impostman--add-query-string-items-to-url
                        url
                        (impostman--build-auth-query-string auth)))
             (insert (funcall
@@ -493,6 +484,17 @@ OUTPUT-NAME is a string with the desired output (eg: \"verb\")."
   (let* ((output-name (or output-name (impostman-read-output)))
          (output-alist (impostman--get-output-alist output-name)))
     (impostman-parse-string string output-alist)))
+
+;; version
+
+(defun impostman-version (&optional print-dest)
+  "Return the Impostman version.
+
+PRINT-DEST is the output stream, by default the echo area.
+
+With \\[universal-argument] prefix, output is in the current buffer."
+  (interactive (list (if current-prefix-arg (current-buffer) t)))
+  (princ (format "impostman %s" impostman-version) print-dest))
 
 (provide 'impostman)
 
