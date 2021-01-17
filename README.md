@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/flashcode/impostman/workflows/CI/badge.svg)](https://github.com/flashcode/impostman/actions?query=workflow%3A%22CI%22)
 
-Postman collections can be imported and used with these Emacs HTTP clients:
+Postman collections and environments can be imported and used with these Emacs HTTP clients:
 
 - [verb](https://github.com/federicotdn/verb)
 - [restclient](https://github.com/pashky/restclient.el)
@@ -24,31 +24,33 @@ You can deploy impostman.el into your site-lisp as usual, then add this line to 
 
 ## Usage
 
-Two functions can be called interactively to import a Postman collection:
+Two functions can be called interactively to import a Postman collection, with an optional environment:
 
 - <kbd>M-x</kbd> `impostman-import-file` <kbd>RET</kbd>
 - <kbd>M-x</kbd> `impostman-import-string` <kbd>RET</kbd>
 
-The function `impostman-import-file` takes two optional parameters (they are asked if not provided):
+The function `impostman-import-file` takes three optional parameters (they are asked if not provided):
 
-- `filename` (optional): the Postman collection
+- `collection` (optional): the Postman collection
+- `environment` (optional): the Postman environment (must be given if variables are used in the collection, can be empty string if the collection does not use any variable from an environment)
 - `output` (optional): the output type (`verb` or `restclient`)
 
 Example:
 
 ```elisp
-(impostman-import-file "/path/to/collection.json" "verb")
+(impostman-import-file "/path/to/collection.json" "/path/to/environment.json" "verb")
 ```
 
-The function `impostman-import-string` takes two parameters (the second is optional and asked if not provided):
+The function `impostman-import-string` takes three parameters (the third is optional and asked if not provided):
 
-- `string`: the string with the collection (JSON format)
+- `collection`: the string with the collection (JSON format)
+- `environment`: the string with the environment (JSON format) (must be given if variables are used in the collection, can be empty string if the collection does not use any variable from an environment)
 - `output` (optional): the output type (`verb` or `restclient`)
 
 Example:
 
 ```elisp
-(impostman-import-string "{}" "verb")
+(impostman-import-string "{}" "" "verb")
 ```
 
 The result is displayed in a new buffer with the Emacs HTTP client, and the mode is set to:
@@ -70,6 +72,7 @@ This alist must be defined like this, for example if your output is for walkman 
 ```elisp
 (defconst my-impostman-walkman-alist
   '((init . my-impostman-walkman-init)
+    (replace-vars . my-impostman-walkman-replace-vars)
     (header . my-impostman-walkman-header)
     (item . my-impostman-walkman-item)
     (request . my-impostman-walkman-request)
@@ -85,6 +88,7 @@ A function can be `ignore`, in this case it is simply ignored, for example if yo
 ```elisp
 (defconst my-impostman-walkman-alist
   '((init . ignore)
+    (replace-vars . my-impostman-walkman-replace-vars)
     (header . my-impostman-walkman-header)
     (item . my-impostman-walkman-item)
     (request . my-impostman-walkman-request)
@@ -96,13 +100,13 @@ A function can be `ignore`, in this case it is simply ignored, for example if yo
 Then you can call for a file:
 
 ```elisp
-(impostman-parse-file "/path/to/collection.json" my-impostman-walkman-alist)
+(impostman-parse-file "/path/to/collection.json" "/path/to/environment.json" my-impostman-walkman-alist)
 ```
 
 And for a string:
 
 ```elisp
-(impostman-parse-string "{}" my-impostman-walkman-alist)
+(impostman-parse-string "{}" "" my-impostman-walkman-alist)
 ```
 
 You can also add your output to the list of impostman outputs, so you can use it with `impostman-import-file` and `impostman-import-string`:
@@ -118,16 +122,36 @@ This will put your output at the beginning of the alist, so it will be the defau
 #### init
 
 ```elisp
-(defun xxx-init ()
+(defun xxx-init (variables)
   (...))
 ```
 
 Function called when the output buffer is created and before parsing the collection.
 
+Arguments:
+
+- `variables` (alist): variables from environment
+
+#### replace-vars
+
+```elisp
+(defun xxx-replace-vars (string variables)
+  (...))
+```
+
+Function called to replace Postman variables (format: `{{variable}}`) in a string. It must return a string where the Postman variables have been replaced by the appropriate value (according to the output).
+
+Note: according to the option `impostman-use-variables`, a variable is either replaced with a reference (by default and the format depends on the output) or directly with its value, if the option is set to nil.
+
+Arguments:
+
+- `string` (string): any string
+- `variables` (alist): variables from environment
+
 #### header
 
 ```elisp
-(defun xxx-header (name description)
+(defun xxx-header (name description variables)
   (...))
 ```
 
@@ -137,11 +161,12 @@ Arguments:
 
 - `name` (string): collection name (`unknown` if not found)
 - `description` (string): collection description
+- `variables` (alist): variables from environment
 
 #### item
 
 ```elisp
-(defun xxx-item (level name description)
+(defun xxx-item (level name description variables)
   (...))
 ```
 
@@ -152,11 +177,12 @@ Arguments:
 - `level` (integer): folder level (≥ 2)
 - `name` (string): item name
 - `description` (string): item description
+- `variables` (alist): variables from environment
 
 #### request
 
 ```elisp
-(defun xxx-request (description method url headers body)
+(defun xxx-request (description method url headers body variables)
   (...))
 ```
 
@@ -169,11 +195,12 @@ Arguments:
 - `url` (string): request URL
 - `headers` (alist): request headers
 - `body` (string): request body
+- `variables` (alist): variables from environment
 
 #### footer
 
 ```elisp
-(defun xxx-footer (name)
+(defun xxx-footer (name variables)
   (...))
 ```
 
@@ -182,21 +209,26 @@ Function called at the end of parsing. It must return a string which is inserted
 Arguments:
 
 - `name` (string): collection name (`unknown` if not found)
+- `variables` (alist): variables from environment
 
 #### end
 
 ```elisp
-(defun xxx-end ()
+(defun xxx-end (variables)
   (...))
 ```
 
 Function called at the end. It can be used to enable a major or minor mode.
 
+Arguments:
+
+- `variables` (alist): variables from environment
+
 ## Known limitations
 
-For now the package offers a basic support of Postman collections, the following features are partially implemented:
+For now the package offers a basic support of Postman collections and environments, the following features are partially implemented:
 
-- autentication: only `basic` and `apikey` are supported
+- authentication: only `basic` and `apikey` are supported
 - body: only `raw` is supported.
 
 Pull requests are welcome to add missing features.

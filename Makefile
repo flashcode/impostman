@@ -26,7 +26,7 @@ compile:
 	$(EMACS) -Q -batch --eval "(setq byte-compile-error-on-warn t)" -f batch-byte-compile impostman.el
 
 test: clean
-	$(EMACS) -Q -batch -L . -l impostman -l tests/impostman-test -f ert-run-tests-batch-and-exit
+	cd tests && $(EMACS) -Q -batch -L . -L .. -l impostman -l impostman-test -f ert-run-tests-batch-and-exit
 
 clean:
 	$(RM) *.elc

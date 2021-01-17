@@ -1,0 +1,383 @@
+{
+	"info": {
+		"_postman_id": "8d20f87a-e93f-43a1-9a17-9fef0cff30e0",
+		"name": "httpbin",
+		"description": "A collection to test with httpbin:\n- HTTP methods\n- Authentication\n- Anything.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http_methods",
+			"item": [
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-test",
+								"value": "the_value",
+								"description": "description of header x-test",
+								"type": "text"
+							},
+							{
+								"key": "x-test2",
+								"value": "second_value",
+								"description": "description of header x-test2",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/delete?search={{variable_delete}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"delete"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "{{variable_delete}}"
+								}
+							]
+						},
+						"description": "A DELETE request."
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-test",
+								"value": "the_value",
+								"description": "description of header x-test",
+								"type": "text"
+							},
+							{
+								"key": "x-test2",
+								"value": "second_value",
+								"description": "description of header x-test2",
+								"type": "text"
+							},
+							{
+								"key": "x-unknown",
+								"value": "{{unknown}}",
+								"description": "header with unknown variable",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/get?search={{variable_get}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"get"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "{{variable_get}}"
+								}
+							]
+						},
+						"description": "A GET request."
+					},
+					"response": []
+				},
+				{
+					"name": "patch",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "x-test",
+								"value": "the_value",
+								"description": "description of header x-test",
+								"type": "text"
+							},
+							{
+								"key": "x-test2",
+								"value": "second_value",
+								"description": "description of header x-test2",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/patch?search=test",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"patch"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "test"
+								}
+							]
+						},
+						"description": "A PATCH request."
+					},
+					"response": []
+				},
+				{
+					"name": "post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-test",
+								"value": "the_value",
+								"description": "description of header x-test",
+								"type": "text"
+							},
+							{
+								"key": "x-test2",
+								"value": "second_value",
+								"description": "description of header x-test2",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"test\": \"value\",\n    \"list\": [\n        \"first\",\n        \"second\"\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/post?search=test",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"post"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "test"
+								}
+							]
+						},
+						"description": "A POST request."
+					},
+					"response": []
+				},
+				{
+					"name": "put",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-test",
+								"value": "the_value",
+								"description": "description of header x-test",
+								"type": "text"
+							},
+							{
+								"key": "x-test2",
+								"value": "second_value",
+								"description": "description of header x-test2",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/put?search=test",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"put"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "test"
+								}
+							]
+						},
+						"description": "A PUT request."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "auth basic",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "secret",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"type": "any"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/basic-auth/user/secret",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"basic-auth",
+								"user",
+								"secret"
+							]
+						},
+						"description": "A request with HTTP basic authentication."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "anything",
+			"item": [
+				{
+					"name": "get, auth with api key (header)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{api-key}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "{{header-api-key}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-test",
+								"value": "the_value",
+								"description": "A test header.",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"test\": \"value\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/anything",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"anything"
+							]
+						},
+						"description": "A GET request with API key authentication (sent as HTTP header)."
+					},
+					"response": []
+				},
+				{
+					"name": "get, auth with api key (query string)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{api-key}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "{{query-api-key}}",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "query",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"description": "A test header.",
+								"key": "x-test",
+								"type": "text",
+								"value": "the_value"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"test\": \"value\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/anything",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"anything"
+							]
+						},
+						"description": "A GET request with API key authentication (sent as query string)."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

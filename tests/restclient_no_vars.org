@@ -7,33 +7,26 @@
 # - Anything.
 #
 
-:url = https://httpbin.org
-:variable_delete = value_delete
-:variable_get = value_get
-:header-api-key = x-api-key
-:query-api-key = key
-:api-key = my_secret_key
-
 ## http_methods
 ### delete
 # A DELETE request.
-DELETE :url/delete?search=:variable_delete
+DELETE https://httpbin.org/delete?search=value_delete
 x-test: the_value
 x-test2: second_value
 ### get
 # A GET request.
-GET :url/get?search=:variable_get
+GET https://httpbin.org/get?search=value_get
 x-test: the_value
 x-test2: second_value
-x-unknown: :unknown
+x-unknown: unknown
 ### patch
 # A PATCH request.
-PATCH :url/patch?search=test
+PATCH https://httpbin.org/patch?search=test
 x-test: the_value
 x-test2: second_value
 ### post
 # A POST request.
-POST :url/post?search=test
+POST https://httpbin.org/post?search=test
 x-test: the_value
 x-test2: second_value
 {
@@ -45,7 +38,7 @@ x-test2: second_value
 }
 ### put
 # A PUT request.
-PUT :url/put?search=test
+PUT https://httpbin.org/put?search=test
 x-test: the_value
 x-test2: second_value
 
@@ -53,21 +46,21 @@ x-test2: second_value
 ### auth basic
 # A request with HTTP basic authentication.
 :auth := (format "Basic %s" (base64-encode-string (encode-coding-string "user:secret" 'utf-8) t))
-GET :url/basic-auth/user/secret
+GET https://httpbin.org/basic-auth/user/secret
 Authorization: :auth
 
 ## anything
 ### get, auth with api key (header)
 # A GET request with API key authentication (sent as HTTP header).
-GET :url/anything
-:header-api-key: :api-key
+GET https://httpbin.org/anything
+x-api-key: my_secret_key
 x-test: the_value
 {
     "test": "value"
 }
 ### get, auth with api key (query string)
 # A GET request with API key authentication (sent as query string).
-GET :url/anything?:query-api-key=:api-key
+GET https://httpbin.org/anything?key=my_secret_key
 x-test: the_value
 {
     "test": "value"

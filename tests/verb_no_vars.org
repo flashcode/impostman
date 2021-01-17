@@ -7,23 +7,23 @@
 ** http_methods
 *** delete
 # A DELETE request.
-delete {{(verb-var url)}}/delete?search={{(verb-var variable_delete)}}
+delete https://httpbin.org/delete?search=value_delete
 x-test: the_value
 x-test2: second_value
 *** get
 # A GET request.
-get {{(verb-var url)}}/get?search={{(verb-var variable_get)}}
+get https://httpbin.org/get?search=value_get
 x-test: the_value
 x-test2: second_value
-x-unknown: {{(verb-var unknown)}}
+x-unknown: unknown
 *** patch
 # A PATCH request.
-patch {{(verb-var url)}}/patch?search=test
+patch https://httpbin.org/patch?search=test
 x-test: the_value
 x-test2: second_value
 *** post
 # A POST request.
-post {{(verb-var url)}}/post?search=test
+post https://httpbin.org/post?search=test
 x-test: the_value
 x-test2: second_value
 
@@ -36,21 +36,21 @@ x-test2: second_value
 }
 *** put
 # A PUT request.
-put {{(verb-var url)}}/put?search=test
+put https://httpbin.org/put?search=test
 x-test: the_value
 x-test2: second_value
 
 ** auth
 *** auth basic
 # A request with HTTP basic authentication.
-get {{(verb-var url)}}/basic-auth/user/secret
+get https://httpbin.org/basic-auth/user/secret
 Authorization: Basic {{(base64-encode-string (encode-coding-string "user:secret" 'utf-8) t)}}
 
 ** anything
 *** get, auth with api key (header)
 # A GET request with API key authentication (sent as HTTP header).
-get {{(verb-var url)}}/anything
-{{(verb-var header-api-key)}}: {{(verb-var api-key)}}
+get https://httpbin.org/anything
+x-api-key: my_secret_key
 x-test: the_value
 
 {
@@ -58,7 +58,7 @@ x-test: the_value
 }
 *** get, auth with api key (query string)
 # A GET request with API key authentication (sent as query string).
-get {{(verb-var url)}}/anything?{{(verb-var query-api-key)}}={{(verb-var api-key)}}
+get https://httpbin.org/anything?key=my_secret_key
 x-test: the_value
 
 {
@@ -69,10 +69,4 @@ x-test: the_value
 
 # Local Variables:
 # eval: (verb-mode)
-# eval: (verb-set-var "url" "https://httpbin.org")
-# eval: (verb-set-var "variable_delete" "value_delete")
-# eval: (verb-set-var "variable_get" "value_get")
-# eval: (verb-set-var "header-api-key" "x-api-key")
-# eval: (verb-set-var "query-api-key" "key")
-# eval: (verb-set-var "api-key" "my_secret_key")
 # End:

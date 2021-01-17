@@ -1,0 +1,72 @@
+* httpbin  :test:
+# A collection to test with httpbin:
+# - HTTP methods
+# - Authentication
+# - Anything.
+
+VAR(url) = https://httpbin.org
+VAR(variable_delete) = value_delete
+VAR(variable_get) = value_get
+VAR(header-api-key) = x-api-key
+VAR(query-api-key) = key
+VAR(api-key) = my_secret_key
+
+** http_methods
+*** delete
+# A DELETE request.
+DELETE $(url)/delete?search=$(variable_delete)
+x-test: the_value
+x-test2: second_value
+*** get
+# A GET request.
+GET $(url)/get?search=$(variable_get)
+x-test: the_value
+x-test2: second_value
+x-unknown: $(unknown)
+*** patch
+# A PATCH request.
+PATCH $(url)/patch?search=test
+x-test: the_value
+x-test2: second_value
+*** post
+# A POST request.
+POST $(url)/post?search=test
+x-test: the_value
+x-test2: second_value
+{
+    "test": "value",
+    "list": [
+        "first",
+        "second"
+    ]
+}
+*** put
+# A PUT request.
+PUT $(url)/put?search=test
+x-test: the_value
+x-test2: second_value
+
+** auth
+*** auth basic
+# A request with HTTP basic authentication.
+GET $(url)/basic-auth/user/secret
+Authorization: Basic dXNlcjpzZWNyZXQ=
+
+** anything
+*** get, auth with api key (header)
+# A GET request with API key authentication (sent as HTTP header).
+GET $(url)/anything
+$(header-api-key): $(api-key)
+x-test: the_value
+{
+    "test": "value"
+}
+*** get, auth with api key (query string)
+# A GET request with API key authentication (sent as query string).
+GET $(url)/anything?$(query-api-key)=$(api-key)
+x-test: the_value
+{
+    "test": "value"
+}
+
+* End of httpbin
