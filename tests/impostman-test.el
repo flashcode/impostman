@@ -49,31 +49,25 @@
   (should (equal (impostman-format-comment "")
                  ""))
   (should (equal (impostman-format-comment "Test")
-                 "# Test\n"))
-  (should (equal (impostman-format-comment "Test\nLine 2")
-                 (concat
-                  "# Test\n"
-                  "# Line 2\n")))
-  (should (equal (impostman-format-comment "Test\nLine 2\nLine 3")
-                 (concat
-                  "# Test\n"
-                  "# Line 2\n"
-                  "# Line 3\n")))
+                 (string-join '("# Test" "") "\n")))
+  (should (equal (impostman-format-comment
+                  (string-join '("Test" "Line 2") "\n"))
+                 (string-join '("# Test" "# Line 2" "") "\n")))
+  (should (equal (impostman-format-comment
+                  (string-join '("Test" "Line 2" "Line 3") "\n"))
+                 (string-join '("# Test" "# Line 2" "# Line 3" "") "\n")))
 
   ;; with a prefix
   (should (equal (impostman-format-comment "" ";; ")
                  ""))
   (should (equal (impostman-format-comment "Test" ";; ")
-                 ";; Test\n"))
-  (should (equal (impostman-format-comment "Test\nLine 2" ";; ")
-                 (concat
-                  ";; Test\n"
-                  ";; Line 2\n")))
-  (should (equal (impostman-format-comment "Test\nLine 2\nLine 3" ";; ")
-                 (concat
-                  ";; Test\n"
-                  ";; Line 2\n"
-                  ";; Line 3\n"))))
+                 (string-join '(";; Test" "") "\n")))
+  (should (equal (impostman-format-comment
+                  (string-join '("Test" "Line 2") "\n") ";; ")
+                 (string-join '(";; Test" ";; Line 2" "") "\n")))
+  (should (equal (impostman-format-comment
+                  (string-join '("Test" "Line 2" "Line 3") "\n") ";; ")
+                 (string-join '(";; Test" ";; Line 2" ";; Line 3" "") "\n"))))
 
 (ert-deftest impostman-test-get-auth-basic-plain ()
   "Test the base64 decoding of Authorization Basic header."
@@ -115,51 +109,48 @@
 (ert-deftest impostman-test-output-verb-header ()
   "Test the output of verb header."
   (should (equal (impostman-output-verb-header
-                  "test" "Description\nLine 2" nil)
-                 (concat
-                  "* test  :verb:\n"
-                  "# Description\n"
-                  "# Line 2\n"))))
+                  "test" (string-join '("Description" "Line 2") "\n") nil)
+                 (string-join
+                  '("* test  :verb:"
+                    "# Description"
+                    "# Line 2"
+                    "")
+                  "\n"))))
 
 (ert-deftest impostman-test-output-verb-item ()
   "Test the output of verb item."
   (should (equal (impostman-output-verb-item 0 "test" "" nil)
-                 (concat
-                  "\n"
-                  "* test\n")))
+                 (string-join '("" "* test" "") "\n")))
   (should (equal (impostman-output-verb-item 1 "test" "" nil)
-                 (concat
-                  "\n"
-                  "* test\n")))
+                 (string-join '("" "* test" "") "\n")))
   (should (equal (impostman-output-verb-item 2 "test" "" nil)
-                 (concat
-                  "\n"
-                  "** test\n")))
+                 (string-join '("" "** test" "") "\n")))
   (should (equal (impostman-output-verb-item 3 "test" "" nil)
-                 "*** test\n"))
-  (should (equal (impostman-output-verb-item 0 "test" "Description\nend." nil)
-                 (concat
-                  "\n"
-                  "* test\n"
-                  "# Description\n"
-                  "# end.\n")))
-  (should (equal (impostman-output-verb-item 1 "test" "Description\nend." nil)
-                 (concat
-                  "\n"
-                  "* test\n"
-                  "# Description\n"
-                  "# end.\n")))
-  (should (equal (impostman-output-verb-item 2 "test" "Description\nend." nil)
-                 (concat
-                  "\n"
-                  "** test\n"
-                  "# Description\n"
-                  "# end.\n")))
-  (should (equal (impostman-output-verb-item 3 "test" "Description\nend." nil)
-                 (concat
-                  "*** test\n"
-                  "# Description\n"
-                  "# end.\n"))))
+                 (string-join '("*** test" "") "\n")))
+  (should (equal (impostman-output-verb-item
+                  0
+                  "test"
+                  (string-join '("line 2" "end.") "\n")
+                  nil)
+                 (string-join '("" "* test" "# line 2" "# end." "") "\n")))
+  (should (equal (impostman-output-verb-item
+                  1
+                  "test"
+                  (string-join '("line 2" "end.") "\n")
+                  nil)
+                 (string-join '("" "* test" "# line 2" "# end." "") "\n")))
+  (should (equal (impostman-output-verb-item
+                  2
+                  "test"
+                  (string-join '("line 2" "end.") "\n")
+                  nil)
+                 (string-join '("" "** test" "# line 2" "# end." "") "\n")))
+  (should (equal (impostman-output-verb-item
+                  3
+                  "test"
+                  (string-join '("line 2" "end.") "\n")
+                  nil)
+                 (string-join '("*** test" "# line 2" "# end." "") "\n"))))
 
 (ert-deftest impostman-test-output-verb-request ()
   "Test the output of verb request."
@@ -171,109 +162,129 @@
                     nil
                     ""
                     nil)
-                   "get users\n"))
+                   (string-join '("get users" "") "\n")))
     (should (equal (impostman-output-verb-request
                     ""
-                    "GET"
+                    "POST"
                     "users"
                     nil
                     "{\"login\": \"admin\"}"
                     nil)
-                   (concat
-                    "get users\n"
-                    "\n{\"login\": \"admin\"}\n")))
+                   (string-join
+                    '("post users"
+                      ""
+                      "{\"login\": \"admin\"}"
+                      "")
+                    "\n")))
     (should (equal (impostman-output-verb-request
                     ""
-                    "GET"
+                    "POST"
                     "users"
                     '(("Authorization" . "token"))
                     "{\"login\": \"admin\"}"
                     nil)
-                   (concat
-                    "get users\n"
-                    "Authorization: token\n"
-                    "\n{\"login\": \"admin\"}\n")))
+                   (string-join
+                    '("post users"
+                      "Authorization: token"
+                      ""
+                      "{\"login\": \"admin\"}"
+                      "")
+                    "\n")))
     (should (equal (impostman-output-verb-request
-                    "Description\nend."
-                    "GET"
+                    (string-join '("Description" "end.") "\n")
+                    "POST"
                     "users"
                     '(("Authorization" . "token") ("header" . "value"))
                     "{\"login\": \"admin\"}"
                     nil)
-                   (concat
-                    "# Description\n"
-                    "# end.\n"
-                    "get users\n"
-                    "Authorization: token\n"
-                    "header: value\n"
-                    "\n{\"login\": \"admin\"}\n")))
+                   (string-join
+                    '("# Description"
+                      "# end."
+                      "post users"
+                      "Authorization: token"
+                      "header: value"
+                      ""
+                      "{\"login\": \"admin\"}"
+                      "")
+                    "\n")))
     (should (equal (impostman-output-verb-request
-                    "Description\nend."
-                    "GET"
+                    (string-join '("Description" "end.") "\n")
+                    "POST"
                     "users"
                     '(("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh")
                       ("header" . "value"))
                     "{\"login\": \"admin\"}"
                     nil)
-                   (concat
-                    "# Description\n"
-                    "# end.\n"
-                    "get users\n"
-                    "Authorization: Basic {{(base64-encode-string "
-                    "(encode-coding-string \"user1:Password!\" 'utf-8) t)}}\n"
-                    "header: value\n"
-                    "\n{\"login\": \"admin\"}\n"))))
+                   (string-join
+                    '("# Description"
+                      "# end."
+                      "post users"
+                      "Authorization: Basic {{(base64-encode-string (encode-coding-string \"user1:Password!\" 'utf-8) t)}}"
+                      "header: value"
+                      ""
+                      "{\"login\": \"admin\"}"
+                      "")
+                    "\n"))))
   (let (impostman-auth-basic-as-elisp-code)
     (should (equal (impostman-output-verb-request
-                    "Description\nend."
-                    "GET"
+                    (string-join '("Description" "end.") "\n")
+                    "POST"
                     "users"
                     '(("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh")
                       ("header" . "value"))
                     "{\"login\": \"admin\"}"
                     nil)
-                   (concat
-                    "# Description\n"
-                    "# end.\n"
-                    "get users\n"
-                    "Authorization: Basic dXNlcjE6UGFzc3dvcmQh\n"
-                    "header: value\n"
-                    "\n{\"login\": \"admin\"}\n")))))
+                   (string-join
+                    '("# Description"
+                      "# end."
+                      "post users"
+                      "Authorization: Basic dXNlcjE6UGFzc3dvcmQh"
+                      "header: value"
+                      ""
+                      "{\"login\": \"admin\"}"
+                      "")
+                    "\n")))))
 
 (ert-deftest impostman-test-output-verb-footer ()
   "Test the output of verb footer."
   (let ((impostman-use-variables t))
     (should (equal (impostman-output-verb-footer "test" nil)
-                   (concat
-                    "\n"
-                    "* End of test\n"
-                    "\n"
-                    "# Local Variables:\n"
-                    "# eval: (verb-mode)\n"
-                    "# End:\n")))
+                   (string-join
+                    '(""
+                      "* End of test"
+                      ""
+                      "# Local Variables:"
+                      "# eval: (verb-mode)"
+                      "# End:"
+                      "")
+                    "\n")))
     (should (equal (impostman-output-verb-footer
                     "test"
                     '(("var1" . "value1") ("var2" . "value2")))
-                   (concat
-                    "\n"
-                    "* End of test\n"
-                    "\n"
-                    "# Local Variables:\n"
-                    "# eval: (verb-mode)\n"
-                    "# eval: (verb-set-var \"var1\" \"value1\")\n"
-                    "# eval: (verb-set-var \"var2\" \"value2\")\n"
-                    "# End:\n"))))
+                   (string-join
+                    '(""
+                      "* End of test"
+                      ""
+                      "# Local Variables:"
+                      "# eval: (verb-mode)"
+                      "# eval: (verb-set-var \"var1\" \"value1\")"
+                      "# eval: (verb-set-var \"var2\" \"value2\")"
+                      "# End:"
+                      "")
+                    "\n"))))
   (let (impostman-use-variables)
     (should (equal (impostman-output-verb-footer
                     "test"
                     '(("var1" . "value1") ("var2" . "value2")))
-                   (concat
-                    "\n"
-                    "* End of test\n"
-                    "\n"
-                    "# Local Variables:\n"
-                    "# eval: (verb-mode)\n"
-                    "# End:\n")))))
+                   (string-join
+                    '(""
+                      "* End of test"
+                      ""
+                      "# Local Variables:"
+                      "# eval: (verb-mode)"
+                      "# End:"
+                      "")
+                    "\n")))))
 
 (ert-deftest impostman-test-output-restclient-replace-vars ()
   "Test the format of variables with restclient syntax."
@@ -304,84 +315,92 @@
   "Test the output of restclient header."
   (let ((impostman-use-variables t))
     (should (equal (impostman-output-restclient-header
-                    "test" "Description\nLine 2" nil)
-                   (concat
-                    "# -*- restclient -*-\n"
-                    "#\n"
-                    "# test\n"
-                    "# Description\n"
-                    "# Line 2\n"
-                    "#\n")))
+                    "test" (string-join '("Description" "Line 2") "\n") nil)
+                   (string-join
+                    '("# -*- restclient -*-"
+                      "#"
+                      "# test"
+                      "# Description"
+                      "# Line 2"
+                      "#"
+                      "")
+                    "\n")))
     (should (equal (impostman-output-restclient-header
                     "test"
-                    "Description\nLine 2"
+                    (string-join '("Description" "Line 2") "\n")
                     '(("var1" . "value1") ("var2" . "value2")))
-                   (concat
-                    "# -*- restclient -*-\n"
-                    "#\n"
-                    "# test\n"
-                    "# Description\n"
-                    "# Line 2\n"
-                    "#\n"
-                    "\n"
-                    ":var1 = value1\n"
-                    ":var2 = value2\n"))))
+                   (string-join
+                    '("# -*- restclient -*-"
+                      "#"
+                      "# test"
+                      "# Description"
+                      "# Line 2"
+                      "#"
+                      ""
+                      ":var1 = value1"
+                      ":var2 = value2"
+                      "")
+                    "\n"))))
   (let (impostman-use-variables)
       (should (equal (impostman-output-restclient-header
-                  "test"
-                  "Description\nLine 2"
-                  '(("var1" . "value1") ("var2" . "value2")))
-                 (concat
-                  "# -*- restclient -*-\n"
-                  "#\n"
-                  "# test\n"
-                  "# Description\n"
-                  "# Line 2\n"
-                  "#\n")))))
+                      "test"
+                      (string-join '("Description" "Line 2") "\n")
+                      '(("var1" . "value1") ("var2" . "value2")))
+                     (string-join
+                      '("# -*- restclient -*-"
+                        "#"
+                        "# test"
+                        "# Description"
+                        "# Line 2"
+                        "#"
+                        "")
+                      "\n")))))
 
 (ert-deftest impostman-test-output-restclient-item ()
   "Test the output of restclient item."
   (should (equal (impostman-output-restclient-item 0 "test" "" nil)
-                 (concat
-                  "\n"
-                  "# test\n")))
+                 (string-join '("" "# test" "") "\n")))
   (should (equal (impostman-output-restclient-item 1 "test" "" nil)
-                 (concat
-                  "\n"
-                  "# test\n")))
+                 (string-join '("" "# test" "") "\n")))
   (should (equal (impostman-output-restclient-item 2 "test" "" nil)
-                 (concat
-                  "\n"
-                  "## test\n")))
+                 (string-join '("" "## test" "") "\n")))
   (should (equal (impostman-output-restclient-item 3 "test" "" nil)
-                 "### test\n"))
+                 (string-join '("### test" "") "\n")))
   (should (equal (impostman-output-restclient-item
-                  0 "test" "Description\nend." nil)
-                 (concat
-                  "\n"
-                  "# test\n"
-                  "# Description\n"
-                  "# end.\n")))
+                  0 "test" (string-join '("Description" "end.") "\n") nil)
+                 (string-join
+                  '(""
+                    "# test"
+                    "# Description"
+                    "# end."
+                    "")
+                  "\n")))
   (should (equal (impostman-output-restclient-item
-                  1 "test" "Description\nend." nil)
-                 (concat
-                  "\n"
-                  "# test\n"
-                  "# Description\n"
-                  "# end.\n")))
+                  1 "test" (string-join '("Description" "end.") "\n") nil)
+                 (string-join
+                  '(""
+                    "# test"
+                    "# Description"
+                    "# end."
+                    "")
+                  "\n")))
   (should (equal (impostman-output-restclient-item
-                  2 "test" "Description\nend." nil)
-                 (concat
-                  "\n"
-                  "## test\n"
-                  "# Description\n"
-                  "# end.\n")))
+                  2 "test" (string-join '("Description" "end.") "\n") nil)
+                 (string-join
+                  '(""
+                    "## test"
+                    "# Description"
+                    "# end."
+                    "")
+                  "\n")))
   (should (equal (impostman-output-restclient-item
-                  3 "test" "Description\nend." nil)
-                 (concat
-                  "### test\n"
-                  "# Description\n"
-                  "# end.\n"))))
+                  3 "test" (string-join '("Description" "end.") "\n") nil)
+                 (string-join
+                  '("### test"
+                    "# Description"
+                    "# end."
+                    "")
+                  "\n"))))
 
 (ert-deftest impostman-test-output-restclient-request ()
   "Test the output of restclient request."
@@ -393,7 +412,10 @@
                     nil
                     ""
                     nil)
-                   "GET users\n"))
+                   (string-join
+                    '("GET users"
+                      "")
+                    "\n")))
     (should (equal (impostman-output-restclient-request
                     ""
                     "GET"
@@ -401,9 +423,11 @@
                     nil
                     "{\"login\": \"admin\"}"
                     nil)
-                   (concat
-                    "GET users\n"
-                    "{\"login\": \"admin\"}\n")))
+                   (string-join
+                    '("GET users"
+                      "{\"login\": \"admin\"}"
+                      "")
+                    "\n")))
     (should (equal (impostman-output-restclient-request
                     ""
                     "GET"
@@ -411,64 +435,73 @@
                     '(("Authorization" . "token"))
                     "{\"login\": \"admin\"}"
                     nil)
-                   (concat
-                    "GET users\n"
-                    "Authorization: token\n"
-                    "{\"login\": \"admin\"}\n")))
+                   (string-join
+                    '("GET users"
+                      "Authorization: token"
+                      "{\"login\": \"admin\"}"
+                      "")
+                    "\n")))
     (should (equal (impostman-output-restclient-request
-                    "Description\nend."
+                    (string-join '("Description" "end.") "\n")
                     "GET"
                     "users"
                     '(("Authorization" . "token") ("header" . "value"))
                     "{\"login\": \"admin\"}"
                     nil)
-                   (concat
-                    "# Description\n"
-                    "# end.\n"
-                    "GET users\n"
-                    "Authorization: token\n"
-                    "header: value\n"
-                    "{\"login\": \"admin\"}\n")))
+                   (string-join
+                    '("# Description"
+                      "# end."
+                      "GET users"
+                      "Authorization: token"
+                      "header: value"
+                      "{\"login\": \"admin\"}"
+                      "")
+                    "\n")))
     (should (equal (impostman-output-restclient-request
-                    "Description\nend."
+                    (string-join '("Description" "end.") "\n")
                     "GET"
                     "users"
                     '(("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh")
                       ("header" . "value"))
                     "{\"login\": \"admin\"}"
                     nil)
-                   (concat
-                    "# Description\n"
-                    "# end.\n"
-                    ":auth := (format \"Basic %s\" (base64-encode-string "
-                    "(encode-coding-string \"user1:Password!\" 'utf-8) t))\n"
-                    "GET users\n"
-                    "Authorization: :auth\n"
-                    "header: value\n"
-                    "{\"login\": \"admin\"}\n"))))
+                   (string-join
+                    '("# Description"
+                      "# end."
+                      ":auth := (format \"Basic %s\" (base64-encode-string (encode-coding-string \"user1:Password!\" 'utf-8) t))"
+                      "GET users"
+                      "Authorization: :auth"
+                      "header: value"
+                      "{\"login\": \"admin\"}"
+                      "")
+                    "\n"))))
     (let (impostman-auth-basic-as-elisp-code)
       (should (equal (impostman-output-restclient-request
-                      "Description\nend."
+                      (string-join '("Description" "end.") "\n")
                       "GET"
                       "users"
                       '(("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh")
                         ("header" . "value"))
                       "{\"login\": \"admin\"}"
                       nil)
-                     (concat
-                      "# Description\n"
-                      "# end.\n"
-                      "GET users\n"
-                      "Authorization: Basic dXNlcjE6UGFzc3dvcmQh\n"
-                      "header: value\n"
-                      "{\"login\": \"admin\"}\n")))))
+                     (string-join
+                      '("# Description"
+                        "# end."
+                        "GET users"
+                        "Authorization: Basic dXNlcjE6UGFzc3dvcmQh"
+                        "header: value"
+                        "{\"login\": \"admin\"}"
+                        "")
+                      "\n")))))
 
 (ert-deftest impostman-test-output-restclient-footer ()
   "Test the output of restclient footer."
   (should (equal (impostman-output-restclient-footer "test" nil)
-                 (concat
-                  "\n"
-                  "# End of test\n"))))
+                 (string-join
+                  '(""
+                    "# End of test"
+                    "")
+                  "\n"))))
 
 (ert-deftest impostman-test-build-auth-headers ()
   "Test the build of auth headers."
@@ -626,19 +659,24 @@
     (with-temp-buffer
       (impostman--parse-item (vector item1) 2 nil impostman-output-verb-alist)
       (should (equal (buffer-string)
-                     (concat
-                      "\n"
-                      "** item1\n"))))
+                     (string-join
+                      '(""
+                        "** item1"
+                        "")
+                      "\n"))))
     ;; add description in item
-    (puthash "description" "The description\nline 2." item1)
+    (puthash "description"
+             (string-join '("The description" "line 2.") "\n") item1)
     (with-temp-buffer
       (impostman--parse-item (vector item1) 2 nil impostman-output-verb-alist)
       (should (equal (buffer-string)
-                     (concat
-                      "\n"
-                      "** item1\n"
-                      "# The description\n"
-                      "# line 2.\n"))))
+                     (string-join
+                      '(""
+                        "** item1"
+                        "# The description"
+                        "# line 2."
+                        "")
+                      "\n"))))
     ;; item with a request
     (puthash "method" "POST" request1)
     (puthash "raw" "https://example.com" url)
@@ -647,24 +685,28 @@
     (with-temp-buffer
       (impostman--parse-item (vector item1) 2  nil impostman-output-verb-alist)
       (should (equal (buffer-string)
-                     (concat
-                      "\n"
-                      "** item1\n"
-                      "# The description\n"
-                      "# line 2.\n"
-                      "post https://example.com\n"))))
+                     (string-join
+                      '(""
+                        "** item1"
+                        "# The description"
+                        "# line 2."
+                        "post https://example.com"
+                        "")
+                      "\n"))))
     ;; add description in request
     (puthash "description" "Some info on request" request1)
     (with-temp-buffer
       (impostman--parse-item (vector item1) 2 nil impostman-output-verb-alist)
       (should (equal (buffer-string)
-                     (concat
-                      "\n"
-                      "** item1\n"
-                      "# The description\n"
-                      "# line 2.\n"
-                      "# Some info on request\n"
-                      "post https://example.com\n"))))
+                     (string-join
+                      '(""
+                        "** item1"
+                        "# The description"
+                        "# line 2."
+                        "# Some info on request"
+                        "post https://example.com"
+                        "")
+                      "\n"))))
     ;; add auth in request
     (puthash "type" "basic" auth)
     (puthash "basic" [] auth)
@@ -673,53 +715,53 @@
     (with-temp-buffer
       (impostman--parse-item (vector item1) 2 nil impostman-output-verb-alist)
       (should (equal (buffer-string)
-                     (concat
-                      "\n"
-                      "** item1\n"
-                      "# The description\n"
-                      "# line 2.\n"
-                      "# Some info on request\n"
-                      "post https://example.com\n"
-                      "Authorization: Basic {{(base64-encode-string "
-                      "(encode-coding-string \"user1:Password!\" "
-                      "'utf-8) t)}}\n"))))
+                     (string-join
+                      '(""
+                        "** item1"
+                        "# The description"
+                        "# line 2."
+                        "# Some info on request"
+                        "post https://example.com"
+                        "Authorization: Basic {{(base64-encode-string (encode-coding-string \"user1:Password!\" 'utf-8) t)}}"
+                        "")
+                      "\n"))))
     ;; add 2 headers in request
     (puthash "header" (vector header1 header2) request1)
     (with-temp-buffer
       (impostman--parse-item (vector item1) 2 nil impostman-output-verb-alist)
       (should (equal (buffer-string)
-                     (concat
-                      "\n"
-                      "** item1\n"
-                      "# The description\n"
-                      "# line 2.\n"
-                      "# Some info on request\n"
-                      "post https://example.com\n"
-                      "Authorization: Basic {{(base64-encode-string "
-                      "(encode-coding-string \"user1:Password!\" "
-                      "'utf-8) t)}}\n"
-                      "header1: value1\n"
-                      "X-header2: the value 2\n"))))
+                     (string-join
+                      '(""
+                        "** item1"
+                        "# The description"
+                        "# line 2."
+                        "# Some info on request"
+                        "post https://example.com"
+                        "Authorization: Basic {{(base64-encode-string (encode-coding-string \"user1:Password!\" 'utf-8) t)}}"
+                        "header1: value1"
+                        "X-header2: the value 2"
+                        "")
+                      "\n"))))
     ;; add body in request
     (puthash "raw" "{\"key\": \"data\"}" body)
     (puthash "body" body request1)
     (with-temp-buffer
       (impostman--parse-item (vector item1) 2 nil impostman-output-verb-alist)
       (should (equal (buffer-string)
-                     (concat
-                      "\n"
-                      "** item1\n"
-                      "# The description\n"
-                      "# line 2.\n"
-                      "# Some info on request\n"
-                      "post https://example.com\n"
-                      "Authorization: Basic {{(base64-encode-string "
-                      "(encode-coding-string \"user1:Password!\" "
-                      "'utf-8) t)}}\n"
-                      "header1: value1\n"
-                      "X-header2: the value 2\n"
-                      "\n"
-                      "{\"key\": \"data\"}\n"))))))
+                     (string-join
+                      '(""
+                        "** item1"
+                        "# The description"
+                        "# line 2."
+                        "# Some info on request"
+                        "post https://example.com"
+                        "Authorization: Basic {{(base64-encode-string (encode-coding-string \"user1:Password!\" 'utf-8) t)}}"
+                        "header1: value1"
+                        "X-header2: the value 2"
+                        ""
+                        "{\"key\": \"data\"}"
+                        "")
+                      "\n"))))))
 
 (ert-deftest impostman-test-parse-json ()
   "Test parsing of a JSON collection."
@@ -738,14 +780,16 @@
       (should (string-prefix-p "unknown.org" (buffer-name)))
       (let ((result (buffer-string)))
         (should (equal result
-                       (concat
-                        "* unknown  :verb:\n"
-                        "\n"
-                        "* End of unknown\n"
-                        "\n"
-                        "# Local Variables:\n"
-                        "# eval: (verb-mode)\n"
-                        "# End:\n"))))
+                       (string-join
+                        '("* unknown  :verb:"
+                          ""
+                          "* End of unknown"
+                          ""
+                          "# Local Variables:"
+                          "# eval: (verb-mode)"
+                          "# End:"
+                          "")
+                        "\n"))))
       (kill-this-buffer))
     ;; add a name in collection
     (puthash "name" "my_collection" info)
@@ -755,32 +799,36 @@
       (should (string-prefix-p "my_collection.org" (buffer-name)))
       (let ((result (buffer-string)))
         (should (equal result
-                       (concat
-                        "* my_collection  :verb:\n"
-                        "\n"
-                        "* End of my_collection\n"
-                        "\n"
-                        "# Local Variables:\n"
-                        "# eval: (verb-mode)\n"
-                        "# End:\n"))))
+                       (string-join
+                        '("* my_collection  :verb:"
+                          ""
+                          "* End of my_collection"
+                          ""
+                          "# Local Variables:"
+                          "# eval: (verb-mode)"
+                          "# End:"
+                          "")
+                        "\n"))))
       (kill-this-buffer))
     ;; add a description in collection
-    (puthash "description" "Description\nLine 2" info)
+    (puthash "description" (string-join '("Description" "Line 2") "\n") info)
     (save-excursion
       (impostman--parse-json collection environment impostman-output-verb-alist)
       (should (string-prefix-p "my_collection.org" (buffer-name)))
       (let ((result (buffer-string)))
         (should (equal result
-                       (concat
-                        "* my_collection  :verb:\n"
-                        "# Description\n"
-                        "# Line 2\n"
-                        "\n"
-                        "* End of my_collection\n"
-                        "\n"
-                        "# Local Variables:\n"
-                        "# eval: (verb-mode)\n"
-                        "# End:\n"))))
+                       (string-join
+                        '("* my_collection  :verb:"
+                          "# Description"
+                          "# Line 2"
+                          ""
+                          "* End of my_collection"
+                          ""
+                          "# Local Variables:"
+                          "# eval: (verb-mode)"
+                          "# End:"
+                          "")
+                        "\n"))))
       (kill-this-buffer))
     ;; add an environment
     (puthash "values" (vector var1 var2) environment)
@@ -789,22 +837,24 @@
       (should (string-prefix-p "my_collection.org" (buffer-name)))
       (let ((result (buffer-string)))
         (should (equal result
-                       (concat
-                        "* my_collection  :verb:\n"
-                        "# Description\n"
-                        "# Line 2\n"
-                        "\n"
-                        "* End of my_collection\n"
-                        "\n"
-                        "# Local Variables:\n"
-                        "# eval: (verb-mode)\n"
-                        "# eval: (verb-set-var \"var1\" \"value1\")\n"
-                        "# eval: (verb-set-var \"var2\" \"value2\")\n"
-                        "# End:\n"))))
+                       (string-join
+                        '("* my_collection  :verb:"
+                          "# Description"
+                          "# Line 2"
+                          ""
+                          "* End of my_collection"
+                          ""
+                          "# Local Variables:"
+                          "# eval: (verb-mode)"
+                          "# eval: (verb-set-var \"var1\" \"value1\")"
+                          "# eval: (verb-set-var \"var2\" \"value2\")"
+                          "# End:"
+                          "")
+                        "\n"))))
       (kill-this-buffer))))
 
 (defun impostman-test-output-custom-init (variables)
-  "Init of custom output."
+  "Initialize custom output."
   (ignore variables))
 
 (defun impostman-test-output-custom-replace-vars (string variables)
@@ -827,7 +877,7 @@
       (dolist (var variables)
         (push (format "VAR(%s) = %s" (car var) (cdr var)) list-vars)))
     (concat
-     "* " name "  :test:\n"
+     "* " name "  :test:" "\n"
      (impostman-format-comment description)
      (when list-vars
        (concat "\n" (string-join (nreverse list-vars) "\n") "\n")))))

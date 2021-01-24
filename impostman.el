@@ -149,7 +149,7 @@ DESCRIPTION is the collection description.
 VARIABLES is a alist with Postman environment variables."
   (ignore variables)
   (concat
-   "* " name "  :verb:\n"
+   "* " name "  :verb:" "\n"
    (impostman-format-comment description)))
 
 (defun impostman-output-verb-item (level name description variables)
