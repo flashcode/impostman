@@ -70,6 +70,13 @@ The result is displayed in a new buffer with the Emacs HTTP client, and the mode
 Some options can be customized to alter the output, you can list and change them with:
 <kbd>M-x</kbd> `customize-group` <kbd>RET</kbd> `impostman` <kbd>RET</kbd>.
 
+List of variables:
+
+- `impostman-auth-basic-as-elisp-code` (boolean, default: `t`): convert Basic authentication header to elisp code so that the username and password can be easily edited; if set to `nil`, the header is written in Base64
+- `impostman-use-variables` (boolean, default: `t`): keep Postman variables in the output and define variables according to the
+output; if set to `nil`, no variables are used, they are directly replaced by their values during the import of collection.
+- `impostman-outputs-alist` (alist, default keys: `verb` and `restclient`): list of outputs, see [Add new output](#add-new-output).
+
 ## Add new output
 
 Two low-level functions can also be called (non interactively), with a custom output (alist).
