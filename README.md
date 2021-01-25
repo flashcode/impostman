@@ -40,7 +40,7 @@ The function `impostman-import-file` takes three optional parameters (they are a
 
 - `collection` (optional): the Postman collection
 - `environment` (optional): the Postman environment (must be given if variables are used in the collection, can be empty string if the collection does not use any variable from an environment)
-- `output` (optional): the output type (`verb` or `restclient`)
+- `output` (optional): the output type: `verb`, `restclient` or your custom output.
 
 Example:
 
