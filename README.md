@@ -5,7 +5,7 @@
 Postman collections and environments can be imported and used with these Emacs HTTP clients:
 
 - [verb](https://github.com/federicotdn/verb)
-- [restclient](https://github.com/pashky/restclient.el)
+- [restclient](https://github.com/pashky/restclient.el).
 
 You can use your own functions to write other formats, see [Add new output](#add-new-output).
 
@@ -13,7 +13,7 @@ You can use your own functions to write other formats, see [Add new output](#add
 
 This package requires:
 
-- Emacs ≥ **27.1** (it uses the native support for JSON introduced in Emacs 27)
+- Emacs ≥ **27.1** (it uses the native support for JSON introduced in Emacs 27).
 
 Optional dependencies:
 
@@ -52,7 +52,7 @@ The function `impostman-import-string` takes three parameters (the third is opti
 
 - `collection`: the string with the collection (JSON format)
 - `environment`: the string with the environment (JSON format) (must be given if variables are used in the collection, can be empty string if the collection does not use any variable from an environment)
-- `output` (optional): the output type (`verb` or `restclient`)
+- `output` (optional): the output type (`verb` or `restclient`).
 
 Example:
 
@@ -63,7 +63,7 @@ Example:
 The result is displayed in a new buffer with the Emacs HTTP client, and the mode is set to:
 
 - verb: `org-mode` (major) and `verb-mode` (minor)
-- restclient: `restclient-mode`
+- restclient: `restclient-mode`.
 
 ## Customization
 
@@ -74,7 +74,7 @@ List of variables:
 
 - `impostman-auth-basic-as-elisp-code` (boolean, default: `t`): convert Basic authentication header to elisp code so that the username and password can be easily edited; if set to `nil`, the header is written in Base64
 - `impostman-use-variables` (boolean, default: `t`): keep Postman variables in the output and define variables according to the
-output; if set to `nil`, no variables are used, they are directly replaced by their values during the import of collection.
+output; if set to `nil`, no variables are used, they are directly replaced by their values during the import of collection
 - `impostman-outputs-alist` (alist, default keys: `verb` and `restclient`): list of outputs, see [Add new output](#add-new-output).
 
 ## Add new output
@@ -144,7 +144,7 @@ Function called when the output buffer is created and before parsing the collect
 
 Arguments:
 
-- `variables` (alist): variables from environment
+- `variables` (alist): variables from environment.
 
 #### replace-vars
 
@@ -160,7 +160,7 @@ Note: according to the option `impostman-use-variables`, a variable is either re
 Arguments:
 
 - `string` (string): any string
-- `variables` (alist): variables from environment
+- `variables` (alist): variables from environment.
 
 #### header
 
@@ -175,7 +175,7 @@ Arguments:
 
 - `name` (string): collection name (`unknown` if not found)
 - `description` (string): collection description
-- `variables` (alist): variables from environment
+- `variables` (alist): variables from environment.
 
 #### item
 
@@ -191,7 +191,7 @@ Arguments:
 - `level` (integer): folder level (≥ 2)
 - `name` (string): item name
 - `description` (string): item description
-- `variables` (alist): variables from environment
+- `variables` (alist): variables from environment.
 
 #### request
 
@@ -209,7 +209,7 @@ Arguments:
 - `url` (string): request URL
 - `headers` (alist): request headers
 - `body` (string): request body
-- `variables` (alist): variables from environment
+- `variables` (alist): variables from environment.
 
 #### footer
 
@@ -223,7 +223,7 @@ Function called at the end of parsing. It must return a string which is inserted
 Arguments:
 
 - `name` (string): collection name (`unknown` if not found)
-- `variables` (alist): variables from environment
+- `variables` (alist): variables from environment.
 
 #### end
 
@@ -236,7 +236,7 @@ Function called at the end. It can be used to enable a major or minor mode.
 
 Arguments:
 
-- `variables` (alist): variables from environment
+- `variables` (alist): variables from environment.
 
 ## Known limitations
 
