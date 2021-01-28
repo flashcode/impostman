@@ -9,7 +9,7 @@ Postman collections and environments can be imported and used with these Emacs H
 
 You can use your own functions to write other formats, see [Add new output](#add-new-output).
 
-## Installation
+## Requirements
 
 This package requires:
 
@@ -22,6 +22,8 @@ Optional dependencies:
 - your custom output package if you write your own output (see [Add new output](#add-new-output)).
 
 Note: without these optional dependencies, you can still convert to all formats, but the mode will not be set in the buffer once converted.
+
+## Installation
 
 You can deploy impostman.el into your site-lisp as usual, then add this line to your Emacs initialization file:
 
