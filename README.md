@@ -38,7 +38,7 @@ Two functions can be called interactively to import a Postman collection, with a
 - <kbd>M-x</kbd> `impostman-import-file` <kbd>RET</kbd>
 - <kbd>M-x</kbd> `impostman-import-string` <kbd>RET</kbd>
 
-The function `impostman-import-file` takes three optional parameters (they are asked if not provided):
+The function `impostman-import-file` takes three optional parameters (they are asked interactively if not provided):
 
 - `collection` (optional): the Postman collection
 - `environment` (optional): the Postman environment (must be given if variables are used in the collection, can be empty string if the collection does not use any variable from an environment)
@@ -50,7 +50,7 @@ Example:
 (impostman-import-file "/path/to/collection.json" "/path/to/environment.json" "verb")
 ```
 
-The function `impostman-import-string` takes three parameters (the third is optional and asked if not provided):
+The function `impostman-import-string` takes three parameters (the third is optional and asked interactively if not provided):
 
 - `collection`: the string with the collection (JSON format)
 - `environment`: the string with the environment (JSON format) (must be given if variables are used in the collection, can be empty string if the collection does not use any variable from an environment)
