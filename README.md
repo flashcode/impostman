@@ -5,9 +5,8 @@
 Postman collections and environments can be imported and used with these Emacs HTTP clients:
 
 - [verb](https://github.com/federicotdn/verb)
-- [restclient](https://github.com/pashky/restclient.el).
-
-You can use your own functions to write other formats, see [Add new output](#add-new-output).
+- [restclient](https://github.com/pashky/restclient.el)
+- other clients with your own functions, see: see [Add new output](#add-new-output).
 
 ## Requirements
 
@@ -18,8 +17,7 @@ This package requires:
 Optional dependencies:
 
 - [verb](https://github.com/federicotdn/verb)
-- [restclient](https://github.com/pashky/restclient.el)
-- your custom output package if you write your own output (see [Add new output](#add-new-output)).
+- [restclient](https://github.com/pashky/restclient.el).
 
 Note: without these optional dependencies, you can still convert to all formats, but the mode will not be set in the buffer once converted.
 
