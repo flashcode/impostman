@@ -12,7 +12,7 @@ Postman collections and environments can be imported and used with these Emacs H
 
 This package requires:
 
-- Emacs ≥ **27.1** (it uses the native support for JSON introduced in Emacs 27).
+- Emacs ≥ 27.1 (it uses the native support for JSON introduced in Emacs 27).
 
 Optional dependencies:
 
