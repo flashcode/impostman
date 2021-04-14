@@ -6,7 +6,7 @@ Postman collections and environments can be imported and used with these Emacs H
 
 - [verb](https://github.com/federicotdn/verb)
 - [restclient](https://github.com/pashky/restclient.el)
-- other clients with your own functions, see: see [Add new output](#add-new-output).
+- other clients with your own functions, see [Add new output](#add-new-output).
 
 ## Requirements
 
