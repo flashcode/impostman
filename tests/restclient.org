@@ -7,12 +7,14 @@
 # - Anything.
 #
 
+:var1 = value1_collection
 :url = https://httpbin.org
 :variable_delete = value_delete
 :variable_get = value_get
 :header-api-key = x-api-key
 :query-api-key = key
 :api-key = my_secret_key
+:var1 = value1_env
 
 ## http_methods
 ### delete
@@ -41,7 +43,8 @@ x-test2: second_value
     "list": [
         "first",
         "second"
-    ]
+    ],
+    "var1": ":var1"
 }
 ### put
 # A PUT request.

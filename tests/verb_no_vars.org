@@ -32,7 +32,8 @@ x-test2: second_value
     "list": [
         "first",
         "second"
-    ]
+    ],
+    "var1": "value1_env"
 }
 *** put
 # A PUT request.

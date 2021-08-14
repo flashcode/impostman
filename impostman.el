@@ -129,7 +129,7 @@ Return nil if the authentication is not Basic or if the base64 is invalid."
   "Replace variables in a string, using verb syntax.
 
 STRING any string that can contain variables with format \"{{variable}}\".
-VARIABLES is a alist with Postman environment variables."
+VARIABLES is a alist with Postman variables."
   (if impostman-use-variables
       (replace-regexp-in-string
        "{{\\([^}]+\\)}}" "{{(verb-var \\1)}}" (or string ""))
@@ -146,7 +146,7 @@ VARIABLES is a alist with Postman environment variables."
 
 NAME is the collection name.
 DESCRIPTION is the collection description.
-VARIABLES is a alist with Postman environment variables."
+VARIABLES is a alist with Postman variables."
   (ignore variables)
   (concat
    "* " name "  :verb:" "\n"
@@ -157,7 +157,8 @@ VARIABLES is a alist with Postman environment variables."
 
 LEVEL is the level.
 NAME is the item name.
-DESCRIPTION is the item description."
+DESCRIPTION is the item description.
+VARIABLES is a alist with Postman variables."
   (ignore variables)
   (concat
    (if (<= level 2) "\n" "")
@@ -171,10 +172,11 @@ DESCRIPTION is the request description.
 METHOD is the HTTP method.
 URL is the URL.
 HEADERS is an alist with HTTP headers.
-BODY is the request body."
+BODY is the request body.
+VARIABLES is a alist with Postman variables."
   (ignore variables)
   (let (list-headers)
-    (dolist (header headers)
+    (dolist (header (nreverse headers))
       (let* ((header-name (car header))
              (header-value (cdr header))
              (new-value header-value))
@@ -199,10 +201,10 @@ BODY is the request body."
   "Format the verb footer.
 
 NAME is the collection name.
-VARIABLES is a alist with Postman environment variables."
+VARIABLES is a alist with Postman variables."
   (let (list-vars)
     (when impostman-use-variables
-      (dolist (var variables)
+      (dolist (var (nreverse variables))
         (push
          (format "# eval: (verb-set-var \"%s\" \"%s\")" (car var) (cdr var))
          list-vars)))
@@ -217,14 +219,16 @@ VARIABLES is a alist with Postman environment variables."
      "# End:\n")))
 
 (defun impostman-output-verb-end (variables)
-  "Function evaluated at the end."
+  "Function evaluated at the end.
+
+VARIABLES is a alist with Postman variables."
   (when (fboundp 'org-mode)
     (org-mode))
   (when (fboundp 'verb-mode)
     (verb-mode))
   ;; evaluate variables now
   (when (and impostman-use-variables (fboundp 'verb-set-var))
-    (dolist (var variables)
+    (dolist (var (nreverse variables))
       (verb-set-var (car var) (cdr var)))))
 
 ;; restclient output
@@ -253,7 +257,7 @@ DESCRIPTION is the collection description.
 VARIABLES is a alist with Postman environment variables."
   (let (list-vars)
     (when impostman-use-variables
-      (dolist (var variables)
+      (dolist (var (nreverse variables))
         (push (format ":%s = %s" (car var) (cdr var)) list-vars)))
     (concat
      "# -*- restclient -*-\n"
@@ -286,7 +290,7 @@ HEADERS is an alist with HTTP headers.
 BODY is the request body."
   (ignore variables)
   (let (list-variables list-headers)
-    (dolist (header headers)
+    (dolist (header (nreverse headers))
       (let* ((header-name (car header))
              (header-value (cdr header))
              (new-value header-value))
@@ -381,7 +385,7 @@ HEADER is a vector with hash tables."
              (key (gethash "key" header-item ""))
              (value (gethash "value" header-item "")))
         (push (cons key value) headers)))
-    (nreverse headers)))
+    headers))
 
 (defun impostman--build-auth-query-string (auth)
   "Return query string parameter to add for authentication as an alist, for
@@ -424,25 +428,28 @@ QUERY-STRING is nil or an alist with query strings to add."
   url)
 
 (defun impostman--build-variables (values)
-  "Return alist with variables using values from Postman environment.
+  "Return alist with variables using values from Postman collection and
+environment.
 
-VALUES is the \"values\" read from environment (vector)."
+VALUES is the \"variable\" read from collection (vector) or \"values\" read
+from environment (vector) (or concatenation of both)."
   (let (variables)
     (dotimes (i (length (or values [])))
       (let* ((item (elt values i))
              (key (gethash "key" item ""))
              (value (gethash "value" item ""))
-             (enabled (equal t (gethash "enabled" item t))))
-        (when enabled
+             (enabled (equal t (gethash "enabled" item t)))
+             (disabled (equal t (gethash "disabled" item nil))))
+        (when (and enabled (not disabled))
           (push (cons key value) variables))))
-    (nreverse variables)))
+    variables))
 
 (defun impostman--parse-item (items level variables output-alist)
   "Parse a Postman collection item.
 
 ITEMS is the \"item\" read from collection (vector).
 LEVEL is the level.
-VARIABLES is a alist with Postman environment variables.
+VARIABLES is a alist with Postman variables.
 OUTPUT-ALIST is an alist with the output callbacks."
   (dotimes (i (length items))
     (let* ((item (elt items i))
@@ -467,7 +474,7 @@ OUTPUT-ALIST is an alist with the output callbacks."
                        (gethash "url" request (make-hash-table)) ""))
                  (auth-headers (impostman--build-auth-headers auth))
                  (other-headers (impostman--build-headers header))
-                 (headers (append auth-headers other-headers))
+                 (headers (append other-headers auth-headers))
                  (replace-vars (alist-get 'replace-vars output-alist)))
             (setq url (impostman--add-query-string-items-to-url
                        url
@@ -496,16 +503,18 @@ OUTPUT-ALIST is an alist with the output callbacks."
                                (gethash "info"
                                         collection (make-hash-table)) ""))
          (item (gethash "item" collection []))
+         (variable (gethash "variable" collection []))
          (values (gethash "values" environment []))
-         (variables (impostman--build-variables values)))
+         (all-variables (impostman--build-variables (vconcat
+                                                     variable values))))
     (pop-to-buffer (generate-new-buffer (concat name ".org")))
-    (funcall (alist-get 'init output-alist) variables)
+    (funcall (alist-get 'init output-alist) all-variables)
     (insert (funcall (alist-get 'header output-alist)
-                     name description variables))
-    (impostman--parse-item item 2 variables output-alist)
-    (insert (funcall (alist-get 'footer output-alist) name variables))
+                     name description all-variables))
+    (impostman--parse-item item 2 all-variables output-alist)
+    (insert (funcall (alist-get 'footer output-alist) name all-variables))
     (goto-char (point-min))
-    (funcall (alist-get 'end output-alist) variables)
+    (funcall (alist-get 'end output-alist) all-variables)
     values))
 
 ;;;###autoload

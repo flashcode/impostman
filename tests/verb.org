@@ -32,7 +32,8 @@ x-test2: second_value
     "list": [
         "first",
         "second"
-    ]
+    ],
+    "var1": "{{(verb-var var1)}}"
 }
 *** put
 # A PUT request.
@@ -69,10 +70,12 @@ x-test: the_value
 
 # Local Variables:
 # eval: (verb-mode)
+# eval: (verb-set-var "var1" "value1_collection")
 # eval: (verb-set-var "url" "https://httpbin.org")
 # eval: (verb-set-var "variable_delete" "value_delete")
 # eval: (verb-set-var "variable_get" "value_get")
 # eval: (verb-set-var "header-api-key" "x-api-key")
 # eval: (verb-set-var "query-api-key" "key")
 # eval: (verb-set-var "api-key" "my_secret_key")
+# eval: (verb-set-var "var1" "value1_env")
 # End:

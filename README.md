@@ -144,7 +144,7 @@ Function called when the output buffer is created and before parsing the collect
 
 Arguments:
 
-- `variables` (alist): variables from environment.
+- `variables` (alist): variables from collection and environment (in reverse order: latest variable read is the first one in alist).
 
 #### replace-vars
 
@@ -160,7 +160,7 @@ Note: according to the option `impostman-use-variables`, a variable is either re
 Arguments:
 
 - `string` (string): any string
-- `variables` (alist): variables from environment.
+- `variables` (alist): variables from collection and environment (in reverse order: latest variable read is the first one in alist).
 
 #### header
 
@@ -175,7 +175,7 @@ Arguments:
 
 - `name` (string): collection name (`unknown` if not found)
 - `description` (string): collection description
-- `variables` (alist): variables from environment.
+- `variables` (alist): variables from collection and environment (in reverse order: latest variable read is the first one in alist).
 
 #### item
 
@@ -191,7 +191,7 @@ Arguments:
 - `level` (integer): folder level (≥ 2)
 - `name` (string): item name
 - `description` (string): item description
-- `variables` (alist): variables from environment.
+- `variables` (alist): variables from collection and environment (in reverse order: latest variable read is the first one in alist).
 
 #### request
 
@@ -207,9 +207,9 @@ Arguments:
 - `description` (string): request description
 - `method` (string): the HTTP method (`GET`, `POST`, `PUT`, …)
 - `url` (string): request URL
-- `headers` (alist): request headers
+- `headers` (alist): request headers (in reverse order: latest header read is the first one in alist)
 - `body` (string): request body
-- `variables` (alist): variables from environment.
+- `variables` (alist): variables from collection and environment (in reverse order: latest variable read is the first one in alist).
 
 #### footer
 
@@ -223,7 +223,7 @@ Function called at the end of parsing. It must return a string which is inserted
 Arguments:
 
 - `name` (string): collection name (`unknown` if not found)
-- `variables` (alist): variables from environment.
+- `variables` (alist): variables from collection and environment (in reverse order: latest variable read is the first one in alist).
 
 #### end
 
@@ -236,7 +236,7 @@ Function called at the end. It can be used to enable a major or minor mode.
 
 Arguments:
 
-- `variables` (alist): variables from environment.
+- `variables` (alist): variables from collection and environment (in reverse order: latest variable read is the first one in alist).
 
 ## Known limitations
 

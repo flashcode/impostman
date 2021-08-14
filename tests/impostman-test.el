@@ -194,7 +194,7 @@
                     (string-join '("Description" "end.") "\n")
                     "POST"
                     "users"
-                    '(("Authorization" . "token") ("header" . "value"))
+                    '(("header" . "value") ("Authorization" . "token"))
                     "{\"login\": \"admin\"}"
                     nil)
                    (string-join
@@ -211,8 +211,8 @@
                     (string-join '("Description" "end.") "\n")
                     "POST"
                     "users"
-                    '(("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh")
-                      ("header" . "value"))
+                    '(("header" . "value")
+                      ("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh"))
                     "{\"login\": \"admin\"}"
                     nil)
                    (string-join
@@ -230,8 +230,8 @@
                     (string-join '("Description" "end.") "\n")
                     "POST"
                     "users"
-                    '(("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh")
-                      ("header" . "value"))
+                    '(("header" . "value")
+                      ("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh"))
                     "{\"login\": \"admin\"}"
                     nil)
                    (string-join
@@ -260,7 +260,7 @@
                     "\n")))
     (should (equal (impostman-output-verb-footer
                     "test"
-                    '(("var1" . "value1") ("var2" . "value2")))
+                    '(("var2" . "value2") ("var1" . "value1")))
                    (string-join
                     '(""
                       "* End of test"
@@ -275,7 +275,7 @@
   (let (impostman-use-variables)
     (should (equal (impostman-output-verb-footer
                     "test"
-                    '(("var1" . "value1") ("var2" . "value2")))
+                    '(("var2" . "value2") ("var1" . "value1")))
                    (string-join
                     '(""
                       "* End of test"
@@ -328,7 +328,7 @@
     (should (equal (impostman-output-restclient-header
                     "test"
                     (string-join '("Description" "Line 2") "\n")
-                    '(("var1" . "value1") ("var2" . "value2")))
+                    '(("var2" . "value2") ("var1" . "value1")))
                    (string-join
                     '("# -*- restclient -*-"
                       "#"
@@ -445,7 +445,7 @@
                     (string-join '("Description" "end.") "\n")
                     "GET"
                     "users"
-                    '(("Authorization" . "token") ("header" . "value"))
+                    '(("header" . "value") ("Authorization" . "token"))
                     "{\"login\": \"admin\"}"
                     nil)
                    (string-join
@@ -461,8 +461,8 @@
                     (string-join '("Description" "end.") "\n")
                     "GET"
                     "users"
-                    '(("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh")
-                      ("header" . "value"))
+                    '(("header" . "value")
+                      ("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh"))
                     "{\"login\": \"admin\"}"
                     nil)
                    (string-join
@@ -480,8 +480,8 @@
                       (string-join '("Description" "end.") "\n")
                       "GET"
                       "users"
-                      '(("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh")
-                        ("header" . "value"))
+                      '(("header" . "value")
+                        ("Authorization" . "Basic dXNlcjE6UGFzc3dvcmQh"))
                       "{\"login\": \"admin\"}"
                       nil)
                      (string-join
@@ -576,14 +576,14 @@
                    nil))
     ;; test headers
     (should (equal (impostman--build-headers (vector header1 header2))
-                   '(("header1" . "value1")
-                     ("X-header2" . "the value 2"))))
+                   '(("X-header2" . "the value 2")
+                     ("header1" . "value1"))))
     (should (equal (impostman--build-headers
                     (vector header1 header2 header1 header2))
-                   '(("header1" . "value1")
-                     ("X-header2" . "the value 2")
+                   '(("X-header2" . "the value 2")
                      ("header1" . "value1")
-                     ("X-header2" . "the value 2"))))))
+                     ("X-header2" . "the value 2")
+                     ("header1" . "value1"))))))
 
 (ert-deftest impostman-test-build-auth-query-string ()
   "Test build of query-string parameter for authentication."
@@ -624,20 +624,31 @@
                                              "value" "value2"
                                              "enabled" t)))
         (var3 #s(hash-table test equal data ("key" "var3"
-                                             "value" "value2"
-                                             "enabled" :false))))
+                                             "value" "value3"
+                                             "enabled" :false)))
+        (var4 #s(hash-table test equal data ("key" "var4"
+                                             "value" "value4"
+                                             "disabled" t)))
+        (var1-new #s(hash-table test equal data ("key" "var1"
+                                                 "value" "value1_new"))))
     (should (equal (impostman--build-variables nil)
                    nil))
     (should (equal (impostman--build-variables [])
                    nil))
     (should (equal (impostman--build-variables (vector var1))
                    '(("var1" . "value1"))))
+    (should (equal (impostman--build-variables (vector var1 var1))
+                   '(("var1" . "value1") ("var1" . "value1"))))
     (should (equal (impostman--build-variables (vector var1 var2))
-                   '(("var1" . "value1") ("var2" . "value2"))))
-    (should (equal (impostman--build-variables (vector var2 var1))
                    '(("var2" . "value2") ("var1" . "value1"))))
-    (should (equal (impostman--build-variables (vector var2 var1 var3))
-                   '(("var2" . "value2") ("var1" . "value1"))))))
+    (should (equal (impostman--build-variables (vector var2 var1))
+                   '(("var1" . "value1") ("var2" . "value2"))))
+    (should (equal (impostman--build-variables (vector var2 var1 var3 var4))
+                   '(("var1" . "value1") ("var2" . "value2"))))
+    (should (equal (impostman--build-variables
+                    (vector var2 var1 var3 var4 var1-new))
+                   '(("var1" . "value1_new") ("var1" . "value1")
+                     ("var2" . "value2"))))))
 
 (ert-deftest impostman-test-parse-item ()
   "Test parsing of an item."
@@ -767,13 +778,18 @@
   "Test parsing of a JSON collection."
   (let ((collection (make-hash-table :test 'equal))
         (info (make-hash-table :test 'equal))
+        (col-var1 #s(hash-table test equal data ("key" "var1"
+                                                 "value" "value1_col")))
+        (col-var2 #s(hash-table test equal data ("key" "var2-not-enabled"
+                                                 "value" "value2_col"
+                                                 "disabled" t)))
         (environment (make-hash-table :test 'equal))
-        (var1 #s(hash-table test equal data ("key" "var1"
-                                             "value" "value1"
-                                             "enabled" t)))
-        (var2 #s(hash-table test equal data ("key" "var2"
-                                             "value" "value2"
-                                             "enabled" t))))
+        (env-var1 #s(hash-table test equal data ("key" "var1"
+                                                 "value" "value1_env"
+                                                 "enabled" t)))
+        (env-var2 #s(hash-table test equal data ("key" "var2-not-enabled"
+                                                 "value" "value2_env"
+                                                 "enabled" nil))))
     ;; empty collection / environment
     (save-excursion
       (impostman--parse-json collection environment impostman-output-verb-alist)
@@ -830,8 +846,8 @@
                           "")
                         "\n"))))
       (kill-this-buffer))
-    ;; add an environment
-    (puthash "values" (vector var1 var2) environment)
+    ;; add variables
+    (puthash "variable" (vector col-var1 col-var2) collection)
     (save-excursion
       (impostman--parse-json collection environment impostman-output-verb-alist)
       (should (string-prefix-p "my_collection.org" (buffer-name)))
@@ -846,8 +862,29 @@
                           ""
                           "# Local Variables:"
                           "# eval: (verb-mode)"
-                          "# eval: (verb-set-var \"var1\" \"value1\")"
-                          "# eval: (verb-set-var \"var2\" \"value2\")"
+                          "# eval: (verb-set-var \"var1\" \"value1_col\")"
+                          "# End:"
+                          "")
+                        "\n"))))
+      (kill-this-buffer))
+    ;; add an environment
+    (puthash "values" (vector env-var1 env-var2) environment)
+    (save-excursion
+      (impostman--parse-json collection environment impostman-output-verb-alist)
+      (should (string-prefix-p "my_collection.org" (buffer-name)))
+      (let ((result (buffer-string)))
+        (should (equal result
+                       (string-join
+                        '("* my_collection  :verb:"
+                          "# Description"
+                          "# Line 2"
+                          ""
+                          "* End of my_collection"
+                          ""
+                          "# Local Variables:"
+                          "# eval: (verb-mode)"
+                          "# eval: (verb-set-var \"var1\" \"value1_col\")"
+                          "# eval: (verb-set-var \"var1\" \"value1_env\")"
                           "# End:"
                           "")
                         "\n"))))
@@ -874,7 +911,7 @@
   "Format header for custom output."
   (let (list-vars)
     (when impostman-use-variables
-      (dolist (var variables)
+      (dolist (var (nreverse variables))
         (push (format "VAR(%s) = %s" (car var) (cdr var)) list-vars)))
     (concat
      "* " name "  :test:" "\n"
@@ -894,7 +931,7 @@
   "Format request for custom output."
   (ignore variables)
   (let (list-headers)
-    (dolist (header headers)
+    (dolist (header (nreverse headers))
       (push (format "%s: %s" (car header) (cdr header)) list-headers))
     (concat
      (impostman-format-comment description)

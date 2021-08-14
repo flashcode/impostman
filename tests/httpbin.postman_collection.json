@@ -146,7 +146,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"test\": \"value\",\n    \"list\": [\n        \"first\",\n        \"second\"\n    ]\n}"
+							"raw": "{\n    \"test\": \"value\",\n    \"list\": [\n        \"first\",\n        \"second\"\n    ],\n    \"var1\": \"{{var1}}\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/post?search=test",
@@ -378,6 +378,17 @@
 					""
 				]
 			}
+		}
+	],
+	"variable": [
+		{
+			"key": "var1",
+			"value": "value1_collection"
+		},
+		{
+			"key": "var2-not-enabled",
+			"value": "value2_collection",
+			"disabled": true
 		}
 	]
 }

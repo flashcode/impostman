@@ -4,12 +4,14 @@
 # - Authentication
 # - Anything.
 
+VAR(var1) = value1_collection
 VAR(url) = https://httpbin.org
 VAR(variable_delete) = value_delete
 VAR(variable_get) = value_get
 VAR(header-api-key) = x-api-key
 VAR(query-api-key) = key
 VAR(api-key) = my_secret_key
+VAR(var1) = value1_env
 
 ** http_methods
 *** delete
@@ -38,7 +40,8 @@ x-test2: second_value
     "list": [
         "first",
         "second"
-    ]
+    ],
+    "var1": "$(var1)"
 }
 *** put
 # A PUT request.
