@@ -1,6 +1,6 @@
 # Impostman ChangeLog
 
-## Version 0.2.0 (under dev)
+## Version 0.2.0 (2021-12-11)
 
 - Auto-load function `impostman-version`.
 - Read variables in collection (issue #2).

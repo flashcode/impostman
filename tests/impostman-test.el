@@ -7,7 +7,7 @@
 ;; Created: 2020-12-24
 ;; Keywords: tools
 ;; URL: https://github.com/flashcode/impostman
-;; Package-Version: 0.2.0-snapshot
+;; Package-Version: 0.2.0
 ;; Package-Requires: ((emacs "27.1"))
 
 ;; This file is not part of GNU Emacs.
