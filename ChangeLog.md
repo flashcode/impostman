@@ -2,6 +2,7 @@
 
 ## Version 0.2.0 (under dev)
 
+- Auto-load function `impostman-version`.
 - Read variables in collection (issue #2).
 - Import Postman environment with a collection, add support of variables, add option `impostman-use-variables` (issue #1).
 
