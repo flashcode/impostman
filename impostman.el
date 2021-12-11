@@ -7,7 +7,7 @@
 ;; Created: 2020-12-24
 ;; Keywords: tools
 ;; URL: https://github.com/flashcode/impostman
-;; Package-Version: 0.2.0
+;; Package-Version: 0.3.0-snapshot
 ;; Package-Requires: ((emacs "27.1"))
 
 ;; This file is not part of GNU Emacs.
@@ -68,7 +68,7 @@ If nil, no variables are used, they are directly replaced by their values
 during the import of collection."
   :type 'boolean)
 
-(defconst impostman-version "0.2.0"
+(defconst impostman-version "0.3.0-snapshot"
   "Impostman package version.")
 
 (defconst impostman-output-verb-alist
