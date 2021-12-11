@@ -36,7 +36,9 @@
 (require 'impostman)
 
 (defun impostman-test--get-file-contents (filename)
-  "Get contents of filename."
+  "Get contents of a file.
+
+FILENAME is a complete path to a file."
   (with-temp-buffer
     (insert-file-contents filename)
     (buffer-string)))
@@ -891,11 +893,16 @@
       (kill-this-buffer))))
 
 (defun impostman-test-output-custom-init (variables)
-  "Initialize custom output."
+  "Initialize custom output.
+
+VARIABLES is an alist with Postman variables."
   (ignore variables))
 
 (defun impostman-test-output-custom-replace-vars (string variables)
-  "Format variables for custom output."
+  "Format variables for custom output.
+
+STRING is any string.
+VARIABLES is an alist with Postman variables."
   (if impostman-use-variables
       (replace-regexp-in-string
        "{{\\([^}]+\\)}}" "$(\\1)" (or string ""))
@@ -908,7 +915,11 @@
      (or string ""))))
 
 (defun impostman-test-output-custom-header (name description variables)
-  "Format header for custom output."
+  "Format header for custom output.
+
+NAME is the collection name.
+DESCRIPTION is the collection description.
+VARIABLES is an alist with Postman variables."
   (let (list-vars)
     (when impostman-use-variables
       (dolist (var (nreverse variables))
@@ -920,7 +931,12 @@
        (concat "\n" (string-join (nreverse list-vars) "\n") "\n")))))
 
 (defun impostman-test-output-custom-item (level name description variables)
-  "Format item for custom output."
+  "Format item for custom output.
+
+LEVEL is the level.
+NAME is the item name.
+DESCRIPTION is the item description.
+VARIABLES is an alist with Postman variables."
   (ignore variables)
   (concat
    (if (<= level 2) "\n" "")
@@ -928,7 +944,14 @@
    (impostman-format-comment description)))
 
 (defun impostman-test-output-custom-request (description method url headers body variables)
-  "Format request for custom output."
+  "Format request for custom output.
+
+DESCRIPTION is the request description.
+METHOD is the HTTP method.
+URL is the URL.
+HEADERS is an alist with HTTP headers.
+BODY is the request body.
+VARIABLES is an alist with Postman variables."
   (ignore variables)
   (let (list-headers)
     (dolist (header (nreverse headers))
@@ -941,12 +964,17 @@
      (if (string-empty-p body) "" (concat body "\n")))))
 
 (defun impostman-test-output-custom-footer (name variables)
-  "Format footer for custom output."
+  "Format footer for custom output.
+
+NAME is the collection name.
+VARIABLES is an alist with Postman variables."
   (ignore variables)
   (concat "\n" "* End of " name "\n"))
 
 (defun impostman-test-output-custom-end (variables)
-  "End of custom output."
+  "End of custom output.
+
+VARIABLES is an alist with Postman variables."
   (ignore variables))
 
 (ert-deftest impostman-test-import-file ()
