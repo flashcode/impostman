@@ -34,6 +34,7 @@ You can also use 'use-package' to install this package via MELPA as well:
 ```elisp
 (use-package impostman
 :ensure t)
+```
 
 ## Usage
 
