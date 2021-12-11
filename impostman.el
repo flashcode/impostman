@@ -616,6 +616,7 @@ OUTPUT-NAME is a string with the desired output (eg: \"verb\")."
 
 ;; version
 
+;;;###autoload
 (defun impostman-version (&optional print-dest)
   "Return the Impostman version.
 
