@@ -29,6 +29,12 @@ You can deploy impostman.el into your site-lisp as usual, then add this line to 
 (require 'impostman)
 ```
 
+You can also use 'use-package' to install this package via MELPA as well:
+
+```elisp
+(use-package impostman
+:ensure t)
+
 ## Usage
 
 Two functions can be called interactively to import a Postman collection, with an optional environment:
