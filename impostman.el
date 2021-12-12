@@ -586,7 +586,7 @@ A key with this name must exist in `impostman-outputs-alist'."
   (let ((output-alist (assoc name impostman-outputs-alist)))
     (if output-alist
         (symbol-value (cdr output-alist))
-      (error (format "Output \"%s\" is not supported" name)))))
+      (error "Output \"%s\" is not supported" name))))
 
 ;;;###autoload
 (defun impostman-import-file (&optional collection environment output-name)
