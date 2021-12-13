@@ -15,6 +15,8 @@ jobs:
           - macos-latest
         emacs-version:
           - "27.1"
+          - "27.2"
+          - "snapshot"
 
     name: Emacs ${{ matrix.emacs-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
