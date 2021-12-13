@@ -23,7 +23,11 @@ Note: without these optional dependencies, you can still convert to all formats,
 
 ## Installation
 
-You can deploy impostman.el into your site-lisp as usual, then add this line to your Emacs initialization file:
+You can install Impostman with `package-install` command, either from [MELPA](https://melpa.org/) or [MELPA Stable](https://stable.melpa.org/):
+
+<kbd>M-x</kbd> `package-install` <kbd>RET</kbd> `impostman` <kbd>RET</kbd>
+
+Alternatively, you can deploy impostman.el into your site-lisp as usual, then add this line to your Emacs initialization file:
 
 ```elisp
 (require 'impostman)
@@ -68,7 +72,8 @@ The result is displayed in a new buffer with the Emacs HTTP client, and the mode
 ## Customization
 
 Some options can be customized to alter the output, you can list and change them with:
-<kbd>M-x</kbd> `customize-group` <kbd>RET</kbd> `impostman` <kbd>RET</kbd>.
+
+<kbd>M-x</kbd> `customize-group` <kbd>RET</kbd> `impostman` <kbd>RET</kbd>
 
 List of variables:
 
