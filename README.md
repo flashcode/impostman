@@ -1,6 +1,8 @@
 # Import of Postman collections in Emacs
 
 [![Build Status](https://github.com/flashcode/impostman/workflows/CI/badge.svg)](https://github.com/flashcode/impostman/actions?query=workflow%3A%22CI%22)
+[![MELPA](https://melpa.org/packages/impostman-badge.svg)](https://melpa.org/#/impostman)
+[![MELPA Stable](https://stable.melpa.org/packages/impostman-badge.svg)](https://stable.melpa.org/#/impostman)
 
 Postman collections and environments can be imported and used with these Emacs HTTP clients:
 
