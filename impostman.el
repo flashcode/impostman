@@ -50,11 +50,11 @@
 
 Example with verb:
 Authorization: Basic {{(base64-encode-string
-  (encode-coding-string \"username:password\" 'utf-8) t)}}
+  (encode-coding-string \"username:password\" \\='utf-8) t)}}
 
 Example with restclient:
 :auth := (format \"Basic %s\" (base64-encode-string
-  (encode-coding-string \"username:password\" 'utf-8) t))
+  (encode-coding-string \"username:password\" \\='utf-8) t))
 Authorization: :auth
 
 If nil, the username and password are directly encoded in base64:
