@@ -1,6 +1,6 @@
 ;;; impostman-test.el --- Test suite for impostman  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2020-2023 Sébastien Helleu <flashcode@flashtux.org>
+;; Copyright (C) 2020-2024 Sébastien Helleu <flashcode@flashtux.org>
 
 ;; Author: Sébastien Helleu <flashcode@flashtux.org>
 ;; Maintainer: Sébastien Helleu <flashcode@flashtux.org>

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020-2023 Sébastien Helleu <flashcode@flashtux.org>
+# Copyright (C) 2020-2024 Sébastien Helleu <flashcode@flashtux.org>
 #
 # Impostman is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
