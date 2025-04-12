@@ -1,6 +1,8 @@
 ;;; impostman-test.el --- Test suite for impostman  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2020-2024 Sébastien Helleu <flashcode@flashtux.org>
+;; SPDX-FileCopyrightText: 2020-2025 Sébastien Helleu <flashcode@flashtux.org>
+
+;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;; Author: Sébastien Helleu <flashcode@flashtux.org>
 ;; Maintainer: Sébastien Helleu <flashcode@flashtux.org>
