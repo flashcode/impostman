@@ -6,13 +6,7 @@ version = 1
 
 [[annotations]]
 path = [
-    ".github/FUNDING.yml",
     ".github/ISSUE_TEMPLATE/*.md",
-    ".github/ISSUE_TEMPLATE/*.yml",
-    ".gitignore",
-    ".mailmap",
-    "CHANGELOG.md",
-    "README.md",
     "tests/*.json",
     "tests/*.org",
 ]

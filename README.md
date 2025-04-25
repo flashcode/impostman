@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021-2025 Sébastien Helleu <flashcode@flashtux.org>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 # Import of Postman collections in Emacs
 
 [![Build Status](https://github.com/flashcode/impostman/workflows/CI/badge.svg)](https://github.com/flashcode/impostman/actions?query=workflow%3A%22CI%22)
@@ -257,6 +263,7 @@ Pull requests are welcome to add missing features.
 
 ## Copyright
 
+<!-- REUSE-IgnoreStart -->
 Copyright © 2020-2025 [Sébastien Helleu](https://github.com/flashcode)
 
 This program is free software; you can redistribute it and/or modify
@@ -271,3 +278,4 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
+<!-- REUSE-IgnoreEnd -->
